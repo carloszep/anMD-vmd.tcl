@@ -1,0 +1,16 @@
+# anMD-vmd.tcl
+carloszepgc@gmail.com
+
+Structural analysis of molecular dynamics trajectories in vmd.
+
+This repository was started from old personal files (version 0.5.9) of the 
+anMD.tcl library for use in VMD along with the userInfo.tcl library.
+
+See comments in anMD.tcl file for detailed information.
+
+All required programs or libraries were incorporated as tools:
+ -userInfo.tcl (v0.0.5): manage extra information about .dcd trajectories.
+ -mmLogInfo.pp (v1.0.2): generates trajInfo_*.tcl scripts required by userInfo.
+ -ioDrv.pp and condText.pp freepascal units required by mmLogInfo.pp.
+.pp files must be compiled using the freepascal compiler (fpc).
+
