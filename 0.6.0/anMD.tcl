@@ -103,7 +103,7 @@
 # constants, global and default parameters
 global anMD_version anMD_logFileName anMD_maxTrajSizeGB anMD_currTrajSize
 global anMD_graphicsOn ind
-set anMD_version 0.5.9
+set anMD_version 0.6.0
 set anMD_logFileName "log_anMD-v.$anMD_version.txt"
 set anMD_graphicsOn 1
 
