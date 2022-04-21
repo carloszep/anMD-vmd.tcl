@@ -1,4 +1,4 @@
-#|-anMD059.tcl :| {condtext}
+#|-anMD.tcl :| {condtext}
 #|  -Structural analysis of MD trajectories .
 #|  -Scripts library in tcl for VMD v.1.9.2 .
 #|  -author :-Carlos Z. Gómez Castro ;
