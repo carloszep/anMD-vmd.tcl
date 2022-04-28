@@ -112,7 +112,7 @@ set anMD_graphicsOn 1
 # +++ showing introduction +++
 
 puts "\nanMD-v$anMD_version: Structural analysis of MD trajectories for VMD."
-puts "Carlos Z. Gómez Castro, 2010-2017.\n"
+puts "Carlos Z. Gómez Castro, 2010-2020.\n"
 
 
 
