@@ -107,7 +107,7 @@
 
 # constants, global and default parameters
 global userInfo_version userInfo_logFileName maxTrajSizeGB
-global currTrajSize ind
+global currTrajSize ind trajFragList
 set userInfo_version 0.0.5
 set userInfo_logFileName "log-userInfo-v.$userInfo_version.txt"
 set maxTrajSizeGB 5.0
@@ -871,7 +871,7 @@ proc getTrajProp {prop {id "top"} {l_fragId "name"} args} {
               if {$prevFinTime == "unk"} {return 0}
               set retValProp 1
             } else {
-              if {$prevFinTime > [lindex $l_trajFrag $ind(iniTime)]} {
+              if {$prevFinTime >= [lindex $l_trajFrag $ind(iniTime)]} {
                 return 0
               } else {
                 set prevFinTime [lindex $l_trajFrag $ind(finTime)]
