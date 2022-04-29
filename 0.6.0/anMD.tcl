@@ -101,6 +101,8 @@
 #
 
 # constants, global and default parameters
+if {![info exists userInfo_version]} {puts "Please, first source 'userInfo' lib"; return}
+
 global anMD_version anMD_logFileName anMD_maxTrajSizeGB anMD_currTrajSize
 global anMD_graphicsOn ind
 set anMD_version 0.6.0
