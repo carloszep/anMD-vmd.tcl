@@ -1,7 +1,9 @@
 #|-anMDlib.tcl :|
-#|  -tcl library for VMD to perform analysis of molecular dynamics (MD) trajectories (traj) .
+#|  -tcl library for VMD to perform analysis of molecular dynamics (MD)
+#|   _ trajectories (traj) .
 #|  -continues from the old library anMD_v.0.6.0 .
-#|  -anMDlib.tcl is intended to drive and interface all the MD analysis procedures implemented .
+#|  -anMDlib.tcl is intended to drive and interface all the MD analysis
+#|   _ procedures implemented .
 #|  -the main objective is to modernize this library using namespaces and to put
 #|   _ different analysis in separated independent files ;
 #|  -dates :
@@ -16,8 +18,8 @@
 #|    -changes in progress :
 #|      -definition of the anMD namespace ;;
 #|  -notes :
-#|    -the use of the userInfo library is assumed to be the same, eventhough userInfo lib
-#|     _ will be updated in the future ;
+#|    -the use of the userInfo library is assumed to be the same, eventhough 
+#|     _ userInfo lib will be updated in the future ;
 #|  -namespace anMD :
 #|    -variables :
 #|      -versionTxt :- ;
@@ -78,12 +80,6 @@ namespace eval anMD {
     variable logFileName
     set loSt $stream
     set logFileName $fileName
-    }
-
-  proc set_outputStream {stream fileName} {
-    variable loSt
-    variable logFileName
-    set loSt $stream
     }
 
   proc set_logLevel {lvl} {
