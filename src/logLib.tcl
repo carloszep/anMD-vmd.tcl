@@ -18,6 +18,7 @@
 #|    -variable :
 #|      -logNameTxt .
 #|      -logVersionTxt .
+#|      -logFileName .
 #|      -loSt .
 #|      -logLvl ;
 #|    -commands :
@@ -25,17 +26,28 @@
 #|      -get_logName_version :
 #|        -returs a string formated as <logName>_v.<version> ;
 #|      -set_logName_version :
-#|        - ;
-#|      -get_logFileName .
-#|      -set_logFileName .
-#|      -get_logOutputStream .
-#|      -set_logOutputStream .
-#|      -get_logLevel .
-#|      -set_logLevel .
-#|      -logMsg .
-#|      -logToken .
+#|        -sets the ligName, the logVersion, and the logFileName ;
+#|      -get_logFileName :
+#|        -returns the name of the file to be used as output stream ;
+#|      -set_logFileName :
+#|        -sets the name of the file to be used as output stream ;
+#|      -get_logOutputStream :
+#|        -returns the output stream currently used for log ;
+#|      -set_logOutputStream :
+#|        -sets an already-oppened output stream and their cooresponding
+#|         _ fileName ;
+#|      -get_logLevel :
+#|        -returns the minimum output level to print log msgs ;
+#|      -set_logLevel :
+#|        -sets the minimum output level to print log msgs ;
+#|      -logMsg :
+#|        -prints a message string to the corrent output stream, if the level
+#|         _ of the msg is greater than or equal to the current log level ;
+#|      -logToken :
+#|        -prints a string to the corrent out stream, with no new line, if the
+#|         _ lvl of the msg is greater than or equal to the current log lvl ;
 #|      -logFlush ;;
-#|  - ;
+#|  - .
 
 namespace eval logLib {
   namespace export version get_logName_version set_logName_version
@@ -134,4 +146,5 @@ namespace eval logLib {
 
   }   ;# namespace eval logLib
 
+#|  - ;
 
