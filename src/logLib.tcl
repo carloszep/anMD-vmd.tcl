@@ -3,7 +3,7 @@
 #|   _ to manage generic log files .
 #|  -dates :
 #|    -created :-2023-04-28.Fri ;
-#|    -modified :-2023-04-28.Fri ;;
+#|    -modified :-2023-04-29.Sat ;;
 #|  -authors and contributors :
 #|    -Carlos Z. Gómez Castro ;
 #|  -public software repositories :
@@ -19,15 +19,33 @@
 #|      -logNameTxt .
 #|      -logVersionTxt .
 #|      -loSt .
-#|      -logLvl ;;
+#|      -logLvl ;
+#|    -commands :
+#|      -version :-returns the version number registered ;
+#|      -get_logName_version :
+#|        -returs a string formated as <logName>_v.<version> ;
+#|      -set_logName_version :
+#|        - ;
+#|      -get_logFileName .
+#|      -set_logFileName .
+#|      -get_logOutputStream .
+#|      -set_logOutputStream .
+#|      -get_logLevel .
+#|      -set_logLevel .
+#|      -logMsg .
+#|      -logToken .
+#|      -logFlush ;;
 #|  - ;
 
 namespace eval logLib {
+  namespace export version get_logName_version set_logName_version
+  namespace export get_logOutputStream set_logOutputStream
+  namespace export get_logLevel set_logLevel logMsg logToken logFlush
   variable logNameTxt ""
   variable logVersionTxt ""
   variable logFileName ""
   variable loSt stdout
-  variable logLvl
+  variable logLvl 1
 
   proc version {} {
     variable logVersionTxt
@@ -109,7 +127,7 @@ namespace eval logLib {
     if {($level > 0) && ($level <= $logLvl)} {puts -nonewline $loSt $msg}
     }
 
-  proc flushMsg {} {
+  proc logFlush {} {
     variable loSt
     if {$loSt != stdout} {flush $loSt}
     }

@@ -30,18 +30,12 @@
 #|      -l_commands ;
 #|    -commands :- ;;;
 
-namespace eval anMD {
-  variable versionTxt "0.0.1"
-  variable logFileName "log_anMD-v.${versionTxt}.txt"
-  variable useGraphics 1
-  variable loSt stdout
-  variable logLvl 1
-  variable l_commands [list version graphicsOn graphicsOff set_logOutputStream]
+source logLib.tcl
 
-  proc version {} {
-    variable versionTxt
-    return ${versionTxt}
-    }
+namespace eval anMD {
+  namespace import ::logLib::*
+  variable useGraphics 1
+  variable l_commands [list version graphicsOn graphicsOff set_logOutputStream]
 
   proc graphicsOn {} {
     variable useGraphics
@@ -51,48 +45,6 @@ namespace eval anMD {
   proc graphicsOff {} {
     variable useGraphics
     set useGraphics 0
-    }
-
-  proc get_logFile {} {
-    variable logFileName
-    return $logFileName
-    }
-
-  proc set_logFile {fileName} {
-    variable logFileName
-    variable loSt
-    set logFileName $fileName
-    if {$loSt != stdout} {
-      close $loSt
-      set loSt stdout
-      }
-    if {($logFileName != "") && ($logFileName != stdout)} {}
-    set loSt [open $logFileName w]
-    }
-
-  proc get_logOutputStream {} {
-    variable loSt
-    return $loSt
-    }
-
-  proc set_logOutputStream {stream fileName} {
-    variable loSt
-    variable logFileName
-    set loSt $stream
-    set logFileName $fileName
-    }
-
-  proc set_logLevel {lvl} {
-    variable logLvl
-    set logLvl $lvl
-    }
-
-  proc logMsg {msg {lvl 1}} {
-    variable loSt
-    variable logLvl
-    if {$lvl > 0} {
-      if {$lvl <= $logLvl} {puts $loSt $msg; flush $loSt}
-      }
     }
 
   }   ;#  namespace eval anMD
