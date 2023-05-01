@@ -20,22 +20,38 @@
 #|  -notes :
 #|    -the use of the userInfo library is assumed to be the same, eventhough 
 #|     _ userInfo lib will be updated in the future ;
-#|  -namespace anMD :
-#|    -variables :
-#|      -versionTxt :- ;
-#|      -logFileName :- ;
-#|      -useGraphics :- ;
-#|      -loSt :- ;
-#|      -logLvl :- ;
-#|      -l_commands ;
-#|    -commands :- ;;;
+
+#|    -commands :
+#|      -init :- ;
+#|      -graphicsOn :- ;
+#|      -graphicsOff :- ;
+#|      -shellComOn :- ;
+#|      -shellComOff :- ;;;
 
 source logLib.tcl
 
+#|  -namespace anMD :
 namespace eval anMD {
+#|    -import :
+#|      -::logLib::* ;
   namespace import ::logLib::*
+#|    -variables :
+#|      -useGraphics :- ;
+#|      -useShellCom :- ;;
   variable useGraphics 1
-  variable l_commands [list version graphicsOn graphicsOff set_logOutputStream]
+  variable useShellCom 1
+
+#|    -commands :
+#|      -proc init {} :
+#|        -initializes library variables .
+#|        -logName and logVersion (imported variables) set to
+#|         _ 'anMDlib' and '0.0.1', resp .
+#|        -the loSt (imported stream output) is left as 'stdout' .
+#|  - ;;;
+  proc init {} {
+    set_logName_version anMDlib 0.0.1 ""
+    
+    }
 
   proc graphicsOn {} {
     variable useGraphics
@@ -47,5 +63,17 @@ namespace eval anMD {
     set useGraphics 0
     }
 
+  proc shellComonOn {} {
+    variable useShellCom
+    set useShellCom 1
+    }
+
+  proc shellComonOff {} {
+    variable useShellCom
+    set useShellCom 0
+    }
+
   }   ;#  namespace eval anMD
+
+#|  - ;
 
