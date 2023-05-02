@@ -31,7 +31,7 @@
 source logLib.tcl
 
 #|  -namespace anMD :
-namespace eval anMD {
+namespace eval anMDlib {
 #|    -import :
 #|      -::logLib::* ;
   namespace import ::logLib::*
@@ -46,11 +46,19 @@ namespace eval anMD {
 #|        -initializes library variables .
 #|        -logName and logVersion (imported variables) set to
 #|         _ 'anMDlib' and '0.0.1', resp .
-#|        -the loSt (imported stream output) is left as 'stdout' .
-#|  - ;;;
+#|        -the loSt (imported stream output) is left as 'stdout', altough
+#|         _ the name of the log file (that can be used) is set to
+#|         _ log_anMDlib_v.0.0.1.txt .
+#|        - ;;;
   proc init {} {
     set_logName_version anMDlib 0.0.1 ""
-    
+    add_commands [list graphicsOn graphicsOff shellComOn shellComOff]
+    set_logFileName stdout
+    logMsg "initialized [get_logName_version]"
+    logMsg "log output to: [get_logOutputStream]   output level: [get_logLevel]"
+    logMsg "name of output file for log: [get_logFileName]"
+    logMsg "print to screen: [get_logScreen]"
+    logMsg "list of commands: [list_commands]"
     }
 
   proc graphicsOn {} {
@@ -63,12 +71,12 @@ namespace eval anMD {
     set useGraphics 0
     }
 
-  proc shellComonOn {} {
+  proc shellComOn {} {
     variable useShellCom
     set useShellCom 1
     }
 
-  proc shellComonOff {} {
+  proc shellComOff {} {
     variable useShellCom
     set useShellCom 0
     }

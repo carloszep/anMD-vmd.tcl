@@ -1,9 +1,9 @@
 #|-logLib.tcl :|
-#|  -tcl library for vmd declaring the logLib namespace used by other
+#|  -tcl library for vmd declaring the logLib namespace, used by other
 #|   _ libraries to manage generic log files .
 #|  -dates :
 #|    -created :-2023-04-28.Fri ;
-#|    -modified :-2023-05-01.Mon ;;
+#|    -modified :-2023-05-02.Tue ;;
 #|  -authors and contributors :
 #|    -Carlos Z. Gómez Castro ;
 #|  -public software repositories :
@@ -28,29 +28,35 @@ namespace eval logLib {
 #|      -version get_logName_version set_logName_version get_logFileName
 #|       _ set_logFileName get_logOutputStream set_logOutputStream
 #|       _ get_logLevel set_logLevel logMsg logToken logFlush
-#|       _ list_commands ;
+#|       _ logScreenOn logScreenOff add_commands list_commands ;
   namespace export version get_logName_version set_logName_version
+  namespace export get_logFileName set_logFileName
   namespace export get_logOutputStream set_logOutputStream
   namespace export get_logLevel set_logLevel logMsg logToken logFlush
-  namespace export list_commands
+  namespace export get_logScreen logScreenOn logScreenOff
+  namespace export add_commands list_commands
 #|    -variable :
 #|      -logNameTxt .
 #|      -logVersionTxt .
 #|      -logFileName .
 #|      -loSt .
 #|      -logLvl .
+#|      -logScreen .
 #|      -l_commands ;
   variable logNameTxt ""
   variable logVersionTxt ""
   variable logFileName ""
   variable loSt stdout
   variable logLvl 1
+  variable logScreen 1
   variable l_commands [list version \
                             get_logName_version set_logName_version \
                             get_logFileName     set_logFileName \
                             get_logOutputStream set_logOutputStream \
                             get_logLevel        set_logLevel \
-                            logMsg logToken logFlush list_commands]
+                            get_logScreen logScreenOn logScreenOff \
+                            logMsg logToken logFlush \
+                            add_commands list_commands]
 
 #|    -commands :
 #|      -proc version {} :
@@ -80,7 +86,8 @@ namespace eval logLib {
     set logFileName $fileName
     global ${logFileName}_version
     set ${logFileName}_version ${logVersionTxt} 
-    if {$logFileName == ""} {
+    if {($logFileName == "default") || \
+        ($logFileName == "auto") || ($logFileName == "")} {
 # sets default logFileName if not specified yet
       set logFileName "log_[get_logName_version].txt"
       }
@@ -93,19 +100,22 @@ namespace eval logLib {
     return $logFileName
     }
 
+
+#**** not working to deactivate log file ****
 #|      -proc set_logFileName {fileName} :
 #|        -sets the name of the file to be used as output stream ;
   proc set_logFileName {fileName} {
     variable logFileName
     variable loSt
-    if {($logFileName != "auto") && ($logFileName != "default")} {
+    if {($fileName != "auto") && \
+        ($fileName != "default") && ($fileName != "")} {
       set logFileName $fileName
       }
-    if {$loSt != stdout} {
+    if {$loSt != "stdout"} {
       close $loSt
       set loSt stdout
       }
-    if {($logFileName != "") && ($logFileName != stdout)} {}
+    if {($logFileName != "") && ($logFileName != "stdout")} {}
     set loSt [open $logFileName w]
     }
 
@@ -130,7 +140,7 @@ namespace eval logLib {
 #|        -returns the minimum output level to print log msgs ;
   proc get_logLevel {} {
     variable logLvl
-    return logLvl
+    return $logLvl
     }
 
 #|      -proc set_logLevel {level} :     
@@ -140,14 +150,19 @@ namespace eval logLib {
     set logLvl $level
     }
 
-#|      -proc logMsg {msg {lvl 1}} :           
+#|      -proc logMsg {msg {level 1}} :           
 #|        -prints a message string to the corrent output stream, if the level
 #|         _ of the msg is greater than or equal to the current log level ;
-  proc logMsg {msg {lvl 1}} {
+  proc logMsg {msg {level 1}} {
     variable loSt
     variable logLvl
-    variable flushMsg
-    if {($lvl > 0) && ($lvl <= $logLvl)} {puts $loSt $msg}
+    variable logScreen
+    if {($level > 0) && ($level <= $logLvl)} {
+      puts $loSt $msg
+      if {($loSt != "stdout") && $logScreen} {
+        puts stdout $msg
+        }
+      }
     }
 
 #|      -proc logToken {msg {level 1}} :
@@ -156,15 +171,50 @@ namespace eval logLib {
    proc logToken {msg {level 1}} {
     variable loSt
     variable logLvl
-    variable flushMsg
-    if {($level > 0) && ($level <= $logLvl)} {puts -nonewline $loSt $msg}
+    variable logScreen
+    if {($level > 0) && ($level <= $logLvl)} {
+      puts -nonewline $loSt $msg
+      if {($loSt != "stdout") && $logScreen} {
+        puts -nonewline stdout $msg
+        }
+      }
     }
 
 #|      -proc logFlush {} :
 #|        -flush log messages printed into a file ;
   proc logFlush {} {
     variable loSt
-    if {$loSt != stdout} {flush $loSt}
+    if {$loSt != "stdout"} {flush $loSt}
+    }
+
+#|      -proc get_logScreen {} :
+#|        -returns the value of logScreen ;
+  proc get_logScreen {} {
+    variable logScreen
+    return $logScreen
+    }
+
+#|      -proc logScreenOn {} :
+#|        -activates an "allways print to screen" option regardless of the
+#|         _ output sent to log files .
+#|        -allows sending log messages to both the screen and a file ;
+  proc logScreenOn {} {
+    variable logScreen
+    set logScreen 1
+    }
+
+#|      -proc logScreenOff {} :
+#|        -deactivates an "allways print to screen" option ;
+  proc logScreenOff {} {
+    variable logScreen
+    set logScreen 0
+    }
+
+#|      -proc add_commands {new_commands} :
+#|        -adds command names to the l_commands list ;
+  proc add_commands {new_commands} {
+    variable l_commands
+    set l_commands [list {*}$l_commands {*}$new_commands]
     }
 
 #|      -proc list_commands {} :
