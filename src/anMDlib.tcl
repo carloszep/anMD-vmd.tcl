@@ -8,7 +8,7 @@
 #|   _ different analysis in separated independent files ;
 #|  -dates :
 #|    -created :-2023-04-27.Thu ;
-#|    -updated :-2023-04-27.Thu ;
+#|    -updated :-2023-05-02.Tue ;
 #|  -authors and contributors :
 #|    -Carlos Z. Gómez Castro ;
 #|  -public software repositories :
@@ -46,15 +46,14 @@ namespace eval anMDlib {
 #|        -initializes library variables .
 #|        -logName and logVersion (imported variables) set to
 #|         _ 'anMDlib' and '0.0.1', resp .
-#|        -the loSt (imported stream output) is left as 'stdout', altough
-#|         _ the name of the log file (that can be used) is set to
-#|         _ log_anMDlib_v.0.0.1.txt .
-#|        - ;;;
+#|        -the loSt (imported stream output) is left as 'stdout' .
+#|        - ;
   proc init {} {
     set_logName_version anMDlib 0.0.1
     add_commands [list graphicsOn graphicsOff shellComOn shellComOff]
     set_logFileName ""
     logMsg "initialized [get_logName_version]" 1
+    logMsg "Structural analysis of MD trajectories for VMD." 1
     logMsg "log output to: [get_logOutputStream]" 1
     logMsg "output level: [get_logLevel]" 1
     logMsg "name of output file for log: [get_logFileName]" 2
@@ -62,6 +61,7 @@ namespace eval anMDlib {
     logMsg "list of commands: [list_commands]" 2
     }
 
+#|
   proc graphicsOn {} {
     variable useGraphics
     set useGraphics 1
@@ -81,6 +81,8 @@ namespace eval anMDlib {
     variable useShellCom
     set useShellCom 0
     }
+
+#|      - ;;
 
   }   ;#  namespace eval anMD
 
