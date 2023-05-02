@@ -51,14 +51,15 @@ namespace eval anMDlib {
 #|         _ log_anMDlib_v.0.0.1.txt .
 #|        - ;;;
   proc init {} {
-    set_logName_version anMDlib 0.0.1 ""
+    set_logName_version anMDlib 0.0.1
     add_commands [list graphicsOn graphicsOff shellComOn shellComOff]
-    set_logFileName stdout
-    logMsg "initialized [get_logName_version]"
-    logMsg "log output to: [get_logOutputStream]   output level: [get_logLevel]"
-    logMsg "name of output file for log: [get_logFileName]"
-    logMsg "print to screen: [get_logScreen]"
-    logMsg "list of commands: [list_commands]"
+    set_logFileName ""
+    logMsg "initialized [get_logName_version]" 1
+    logMsg "log output to: [get_logOutputStream]" 1
+    logMsg "output level: [get_logLevel]" 1
+    logMsg "name of output file for log: [get_logFileName]" 2
+    logMsg "print to screen: [get_logScreen]" 2
+    logMsg "list of commands: [list_commands]" 2
     }
 
   proc graphicsOn {} {

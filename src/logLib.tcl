@@ -25,12 +25,12 @@
 #|  -namespace logLib :
 namespace eval logLib {
 #|    -export :
-#|      -version get_logName_version set_logName_version get_logFileName
-#|       _ set_logFileName get_logOutputStream set_logOutputStream
+#|      -version get_logName get_logName_version set_logName_version get_logPath set_logPath
+#|       _ get_logFileName set_logFileName get_logOutputStream set_logOutputStream
 #|       _ get_logLevel set_logLevel logMsg logToken logFlush
 #|       _ logScreenOn logScreenOff add_commands list_commands ;
-  namespace export version get_logName_version set_logName_version
-  namespace export get_logFileName set_logFileName
+  namespace export version get_logName get_logName_version set_logName_version
+  namespace export get_logPath set_logPath get_logFileName set_logFileName
   namespace export get_logOutputStream set_logOutputStream
   namespace export get_logLevel set_logLevel logMsg logToken logFlush
   namespace export get_logScreen logScreenOn logScreenOff
@@ -38,6 +38,7 @@ namespace eval logLib {
 #|    -variable :
 #|      -logNameTxt .
 #|      -logVersionTxt .
+#|      -logPath .
 #|      -logFileName .
 #|      -loSt .
 #|      -logLvl .
@@ -45,11 +46,12 @@ namespace eval logLib {
 #|      -l_commands ;
   variable logNameTxt ""
   variable logVersionTxt ""
+  variable logPath ""
   variable logFileName ""
   variable loSt stdout
   variable logLvl 1
   variable logScreen 1
-  variable l_commands [list version \
+  variable l_commands [list version get_logName \
                             get_logName_version set_logName_version \
                             get_logFileName     set_logFileName \
                             get_logOutputStream set_logOutputStream \
@@ -66,6 +68,13 @@ namespace eval logLib {
     return $logVersionTxt
     }
 
+#|      -proc get_logName {} :
+#|        -returns the strings registered as logNameTxt ;
+  proc get_logName {} {
+    variable logNameTxt
+    return $logNameTxt
+    }
+
 #|      -proc get_logName_version {} :
 #|        -returs a string formated as <logName>_v.<version> ;
   proc get_logName_version {} {
@@ -75,22 +84,27 @@ namespace eval logLib {
     return "${logNameTxt}_v.$logVersionTxt"
     }
 
-#|      -proc set_logName_version {name ver {fileName ""}} :
-#|        -sets the ligName, the logVersion, and the logFileName ;
-  proc set_logName_version {name ver {fileName ""}} {
+#|      -proc set_logName_version {name ver} :
+#|        -sets the logName and the logVersion .
+  proc set_logName_version {name ver} {
     variable logNameTxt
     variable logVersionTxt
-    variable logFileName
     set logNameTxt $name
     set logVersionTxt $ver
-    set logFileName $fileName
-    global ${logFileName}_version
-    set ${logFileName}_version ${logVersionTxt} 
-    if {($logFileName == "default") || \
-        ($logFileName == "auto") || ($logFileName == "")} {
-# sets default logFileName if not specified yet
-      set logFileName "log_[get_logName_version].txt"
-      }
+    }
+
+#|      -proc get_logPath {} :
+#|        -returns the path registered for the log ;
+  proc get_logPath {} {
+    variable logPath
+    return $logPath
+    }
+
+#|      -proc set_logPath {path} :
+#|        -sets the path prepended to the log file ;
+  proc set_logPath {path} {
+    variable logPath
+    set logPath $path
     }
 
 #|      -proc get_logFileName {} :
@@ -100,23 +114,37 @@ namespace eval logLib {
     return $logFileName
     }
 
-
-#**** not working to deactivate log file ****
 #|      -proc set_logFileName {fileName} :
-#|        -sets the name of the file to be used as output stream ;
+#|        -sets the name of the file to be used as output stream .
+#|        -can be used to deactivate log output to files .
+#|        -arguments :
+#|          -fileName :
+#|            -acceptable values :
+#|              -a string usable as a file name .
+#|              -'none', '""', 'stdout' :
+#|                -deactivate the output to a log file .
+#|                -the output stream (loSt) is set to stdout ;
+#|              -'auto', 'default' :
+#|                -a default file name is used with format 'log_<logName>_v.<version>.txt' ;;;;;
   proc set_logFileName {fileName} {
+    variable logPath
     variable logFileName
     variable loSt
-    if {($fileName != "auto") && \
-        ($fileName != "default") && ($fileName != "")} {
-      set logFileName $fileName
+    if {$loSt != "stdout"} {close $loSt}
+    switch [string tolower $fileName] {
+      "none" - "" - "stdout" {
+        set loSt stdout
+        set logFileName ""
+        }
+      "auto" - "default" {
+        set logFileName "log_[get_logName_version].txt"
+        set loSt [open ${logPath}${logFileName} w]
+        }
+      default {
+        set logFileName $fileName
+        set loSt [open ${logPath}${logFileName} w]
+        }
       }
-    if {$loSt != "stdout"} {
-      close $loSt
-      set loSt stdout
-      }
-    if {($logFileName != "") && ($logFileName != "stdout")} {}
-    set loSt [open $logFileName w]
     }
 
 #|      -proc get_logOutputStream {} :
