@@ -42,25 +42,6 @@ namespace eval anMDlib {
   variable useShellCom 1
 
 #|    -commands :
-#|      -proc init {} :
-#|        -initializes library variables .
-#|        -logName and logVersion (imported variables) set to
-#|         _ 'anMDlib' and '0.0.1', resp .
-#|        -the loSt (imported stream output) is left as 'stdout' .
-#|        - ;
-  proc init {} {
-    set_logName_version anMDlib 0.0.1
-    add_commands [list graphicsOn graphicsOff shellComOn shellComOff]
-    set_logFileName ""
-    logMsg "initialized [get_logName_version]" 1
-    logMsg "Structural analysis of MD trajectories for VMD." 1
-    logMsg "log output to: [get_logOutputStream]" 1
-    logMsg "output level: [get_logLevel]" 1
-    logMsg "name of output file for log: [get_logFileName]" 2
-    logMsg "print to screen: [get_logScreen]" 2
-    logMsg "list of commands: [list_commands]" 2
-    }
-
 #|
   proc graphicsOn {} {
     variable useGraphics
@@ -86,5 +67,34 @@ namespace eval anMDlib {
 
   }   ;#  namespace eval anMD
 
+#|  -initialization of the anMD namespace :
+#|    -intended to show the usage of the library and setup default values .
+#|    -set the name and version of the library using the logLib namespace .
+::anMD::set_logName_version anMDlib 0.0.1
+#|    -set the library path prepended to the log file .
+::anMD::set_logPath ""
+#|    -set the name of the file to output log messages .
+#|    -settting logFileName to 'stdout' outputs log only to screen .
+::anMD::set_logFileName "stdout"
+#|    -set the logLevel controling the "amount" of log output .
+::anMD::set_logLevel 1
+#|    -activates the output to the screen additional to file log output .
+::anMD::logScreenOn
+#|    -incorportates the anMD list of commands to the logLib list .
+::anMD::add_commands [list graphicsOn graphicsOff shellComOn shellComOff]
+#|    -reports to log the initial configuration .
+::anMD::logMsg "initialized [get_logName_version]" 1
+::anMD::logMsg "Structural analysis of MD trajectories for VMD." 1
+::anMD::logMsg "log path: [::anMD::get_logPath]"
+::anMD::logMsg "log output to: [get_logOutputStream]" 2
+::anMD::logMsg "output level: [get_logLevel]" 1
+::anMD::logMsg "name of output file for log: [get_logFileName]" 2
+::anMD::logMsg "print to screen: [get_logScreen]" 2
+::anMD::logMsg "list of commands: [list_commands]" 2
+#|    -flush the output buffer .
+::anMD::logFlush
+#|    - ;
+
 #|  - ;
+
 

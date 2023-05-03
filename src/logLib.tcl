@@ -3,7 +3,7 @@
 #|   _ libraries to manage generic log files .
 #|  -dates :
 #|    -created :-2023-04-28.Fri ;
-#|    -modified :-2023-05-02.Tue ;;
+#|    -modified :-2023-05-03.Wed ;;
 #|  -authors and contributors :
 #|    -Carlos Z. Gómez Castro ;
 #|  -public software repositories :
@@ -125,7 +125,8 @@ namespace eval logLib {
 #|                -deactivate the output to a log file .
 #|                -the output stream (loSt) is set to stdout ;
 #|              -'auto', 'default' :
-#|                -a default file name is used with format 'log_<logName>_v.<version>.txt' ;;;;;
+#|                -a default file name is used with format 'log_<logName>_v.<version>.txt' ;;;;
+#|        - ;
   proc set_logFileName {fileName} {
     variable logPath
     variable logFileName
@@ -160,6 +161,7 @@ namespace eval logLib {
   proc set_logOutputStream {stream fileName} {
     variable loSt
     variable logFileName
+    if {$loSt != "stdout"} {close $loSt}
     set loSt $stream
     set logFileName $fileName
     }
