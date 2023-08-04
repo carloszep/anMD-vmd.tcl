@@ -27,10 +27,29 @@
 #|  -namespace logLib :
 namespace eval logLib {
 #|    -export :
-#|      -version get_logName get_logName_version set_logName_version get_logPath set_logPath
-#|       _ get_logFileName set_logFileName get_logOutputStream set_logOutputStream
-#|       _ get_logLevel set_logLevel logMsg logToken logFlush
-#|       _ logScreenOn logScreenOff add_commands list_commands ;
+#|      -version .
+#|      -get_logName .
+#|      -get_logName_version .
+#|      -set_logName_version .
+#|      -get_logPath .
+#|      -set_logPath .
+#|      -get_logFileName .
+#|      -set_logFileName .
+#|      -get_logOutputStream .
+#|      -set_logOutputStream .
+#|      -get_logLevel .
+#|      -set_logLevel .
+#|      -logMsg .
+#|      -logToken .
+#|      -logFlush .
+#|      -get_logScreen .
+#|      -logScreenOn .
+#|      -logScreenOff .
+#|      -get_logAppend .
+#|      -logAppendOn .
+#|      -logAppendOff .
+#|      -add_commands .
+#|      -list_commands ;
   namespace export version get_logName get_logName_version set_logName_version
   namespace export get_logPath set_logPath get_logFileName set_logFileName
   namespace export get_logOutputStream set_logOutputStream
@@ -38,15 +57,24 @@ namespace eval logLib {
   namespace export get_logScreen logScreenOn logScreenOff
   namespace export get_logAppend logAppendOn logAppendOff
   namespace export add_commands list_commands
-#|    -variable :
+#|    -variables :
 #|      -logNameTxt :
-#|        -default :-"" ;;
+#|        -name of the proc, library, namespace, etc., using the logLib .
+#|        -to be included in the default logFileName and in log msgs .
+#|        -default value :
+#|          -"logLib" ;;
 #|      -logVersionTxt :
-#|        -default :-"" ;;
+#|        -version string of the proc, library, namespace, etc., using the logLib .
+#|        -to be included in the default logFileName and in log msgs .
+#|        -default value :
+#|          -"0.0.2" ;;
 #|      -logPath :
-#|        -default :-"" ;;
+#|        -default value :-"" ;;
 #|      -logFileName :
-#|        -default :-"" ;;
+#|        -default value :-"" ;;
+#|      -logPrefixStr :
+#|        -text to be preppended to log messages :
+#|        - ;;
 #|      -loSt :
 #|        -default :-stdout ;;
 #|      -logLvl :
