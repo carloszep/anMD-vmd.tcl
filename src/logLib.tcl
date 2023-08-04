@@ -11,7 +11,8 @@
 #|  -version information :
 #|    -current version :-0.0.1 ;
 #|    -changes in progress :
-#|      -definition of the logLib namespace ;;
+#|      -definition of the logLib namespace .
+#|      -some procs tested on 3ago23 ;;
 #|  -usage :
 #|    -1. source within another script as :
 #|      -source logLib.tcl ;
@@ -34,6 +35,7 @@ namespace eval logLib {
   namespace export get_logOutputStream set_logOutputStream
   namespace export get_logLevel set_logLevel logMsg logToken logFlush
   namespace export get_logScreen logScreenOn logScreenOff
+  namespace export get_logAppend logAppendOn logAppendOff
   namespace export add_commands list_commands
 #|    -variable :
 #|      -logNameTxt .
@@ -43,6 +45,7 @@ namespace eval logLib {
 #|      -loSt .
 #|      -logLvl .
 #|      -logScreen .
+#|      -logAppend .
 #|      -l_commands ;
   variable logNameTxt ""
   variable logVersionTxt ""
@@ -51,12 +54,14 @@ namespace eval logLib {
   variable loSt stdout
   variable logLvl 1
   variable logScreen 1
+  variable logAppend 1
   variable l_commands [list version get_logName \
                             get_logName_version set_logName_version \
                             get_logFileName     set_logFileName \
                             get_logOutputStream set_logOutputStream \
                             get_logLevel        set_logLevel \
                             get_logScreen logScreenOn logScreenOff \
+                            get_logAppend logAppendOn logAppendOff \
                             logMsg logToken logFlush \
                             add_commands list_commands]
 
@@ -125,11 +130,13 @@ namespace eval logLib {
 #|                -deactivate the output to a log file .
 #|                -the output stream (loSt) is set to stdout ;
 #|              -'auto', 'default' :
-#|                -a default file name is used with format 'log_<logName>_v.<version>.txt' ;;;;
+#|                -a default file name is used with format
+#|                 _ 'log_<logName>_v.<version>.txt' ;;;;
 #|        - ;
   proc set_logFileName {fileName} {
     variable logPath
     variable logFileName
+    variable logAppend
     variable loSt
     if {$loSt != "stdout"} {close $loSt}
     switch [string tolower $fileName] {
@@ -139,11 +146,19 @@ namespace eval logLib {
         }
       "auto" - "default" {
         set logFileName "log_[get_logName_version].txt"
-        set loSt [open ${logPath}${logFileName} w]
+        if {([file exists ${logPath}${logFileName}]) && ($logAppend)} {
+          set loSt [open ${logPath}${logFileName} a]
+        } else {
+          set loSt [open ${logPath}${logFileName} w]
+          }
         }
       default {
         set logFileName $fileName
-        set loSt [open ${logPath}${logFileName} w]
+        if {([file exists ${logPath}${logFileName}]) && ($logAppend)} {
+          set loSt [open ${logPath}${logFileName} a]
+        } else {
+          set loSt [open ${logPath}${logFileName} w]
+          }
         }
       }
     }
@@ -234,10 +249,32 @@ namespace eval logLib {
     }
 
 #|      -proc logScreenOff {} :
-#|        -deactivates an "allways print to screen" option ;
+#|        -deactivates an "allways print to screen" option .
+#|        -if no log file is specified the output will be sent to stdout anyway ;
   proc logScreenOff {} {
     variable logScreen
     set logScreen 0
+    }
+
+#|      -proc get_logAppend {} :
+#|        -returns the value of logAppend ;
+  proc get_logAppend {} {
+    variable logAppend
+    return $logAppend
+    }
+
+#|      -proc logAppendOn {} :
+#|        -allows to append log messages to a reoppened file ;
+  proc logAppendOn {} {
+    variable logAppend
+    set logAppend 1
+    }
+
+#|      -proc logAppendOff {} :
+#|        -allways rewrites (overwrites) a file that is reoppened ;
+  proc logAppendOff {} {
+    variable logAppend
+    set logAppend 0
     }
 
 #|      -proc add_commands {new_commands} :
