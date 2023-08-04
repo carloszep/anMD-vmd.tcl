@@ -3,16 +3,17 @@
 #|   _ libraries to manage generic log files .
 #|  -dates :
 #|    -created :-2023-04-28.Fri ;
-#|    -modified :-2023-05-03.Wed ;;
+#|    -modified :-2023-08-03.Thu ;;
 #|  -authors and contributors :
 #|    -Carlos Z. Gómez Castro ;
 #|  -public software repositories :
 #|    -https://github.com/carloszep/anMD-vmd.tcl ;
 #|  -version information :
-#|    -current version :-0.0.1 ;
+#|    -current version :-0.0.2 ;
 #|    -changes in progress :
 #|      -definition of the logLib namespace .
-#|      -some procs tested on 3ago23 ;;
+#|      -some procs tested on 3ago23 .
+#|      -version changed to 0.0.2 after adding logAppend procs ;;
 #|  -usage :
 #|    -1. source within another script as :
 #|      -source logLib.tcl ;
@@ -38,14 +39,22 @@ namespace eval logLib {
   namespace export get_logAppend logAppendOn logAppendOff
   namespace export add_commands list_commands
 #|    -variable :
-#|      -logNameTxt .
-#|      -logVersionTxt .
-#|      -logPath .
-#|      -logFileName .
-#|      -loSt .
-#|      -logLvl .
-#|      -logScreen .
-#|      -logAppend .
+#|      -logNameTxt :
+#|        -default :-"" ;;
+#|      -logVersionTxt :
+#|        -default :-"" ;;
+#|      -logPath :
+#|        -default :-"" ;;
+#|      -logFileName :
+#|        -default :-"" ;;
+#|      -loSt :
+#|        -default :-stdout ;;
+#|      -logLvl :
+#|        -default :-1 ;;
+#|      -logScreen :
+#|        -default :-1 ;;
+#|      -logAppend :
+#|        -default :-1 ;;
 #|      -l_commands ;
   variable logNameTxt ""
   variable logVersionTxt ""
