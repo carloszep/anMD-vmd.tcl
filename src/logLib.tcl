@@ -35,6 +35,10 @@ namespace eval logLib {
 #|      -set_logPath .
 #|      -get_logFileName .
 #|      -set_logFileName .
+#|      -get_logPrefixStr .
+#|      -set_logPrefixStr .
+#|      -get_logSufixStr .
+#|      -set_logSufixStr .
 #|      -get_logOutputStream .
 #|      -set_logOutputStream .
 #|      -get_logLevel .
@@ -52,6 +56,8 @@ namespace eval logLib {
 #|      -list_commands ;
   namespace export version get_logName get_logName_version set_logName_version
   namespace export get_logPath set_logPath get_logFileName set_logFileName
+  namespace export get_logPrefixStr set_logPrefixStr
+  namespace export get_logSufixStr set_logSufixStr
   namespace export get_logOutputStream set_logOutputStream
   namespace export get_logLevel set_logLevel logMsg logToken logFlush
   namespace export get_logScreen logScreenOn logScreenOff
@@ -63,38 +69,47 @@ namespace eval logLib {
 #|        -to be included in the default logFileName and in log msgs .
 #|        -default value :
 #|          -"logLib" ;;
+  variable logNameTxt "logLib"
 #|      -logVersionTxt :
 #|        -version string of the proc, library, namespace, etc., using the logLib .
 #|        -to be included in the default logFileName and in log msgs .
 #|        -default value :
 #|          -"0.0.2" ;;
+  variable logVersionTxt "0.0.2"
 #|      -logPath :
 #|        -default value :-"" ;;
+  variable logPath ""
 #|      -logFileName :
 #|        -default value :-"" ;;
+  variable logFileName ""
 #|      -logPrefixStr :
-#|        -text to be preppended to log messages :
-#|        - ;;
+#|        -text to be preppended to log messages .
+#|        -default value :-"" ;;
+  variable logPrefixStr ""
+#|      -logSufixStr :
+#|        -text to be appended at the en of each log message .
+#|        -default value :-"" ;;
+  variable logSufixStr ""
 #|      -loSt :
-#|        -default :-stdout ;;
+#|        -stream for log output messages .
+#|        -default value :-stdout ;;
+  variable loSt stdout
 #|      -logLvl :
 #|        -default :-1 ;;
-#|      -logScreen :
-#|        -default :-1 ;;
-#|      -logAppend :
-#|        -default :-1 ;;
-#|      -l_commands ;
-  variable logNameTxt ""
-  variable logVersionTxt ""
-  variable logPath ""
-  variable logFileName ""
-  variable loSt stdout
   variable logLvl 1
+#|      -logScreen :
+#|        -default value :-1 ;;
   variable logScreen 1
+#|      -logAppend :
+#|        -default value :-1 ;;
   variable logAppend 1
+#|      -l_commands :
+#|        -list of the proc names to be exported by the namespace ;;
   variable l_commands [list version get_logName \
                             get_logName_version set_logName_version \
                             get_logFileName     set_logFileName \
+                            get_logPrefixStr    set_logPrefixStr \
+                            get_logSufixStr     set_logSufixStr \
                             get_logOutputStream set_logOutputStream \
                             get_logLevel        set_logLevel \
                             get_logScreen logScreenOn logScreenOff \
@@ -200,6 +215,29 @@ namespace eval logLib {
       }
     }
 
+#|      -proc get_logPrefixStr {} :
+#|        -returns the log prefix string ;
+  proc get_logPrefixStr {} {
+    variable logPrefixStr
+    return $logPrefixStr
+    }
+
+#|      -proc set_logPrefixStr {} :
+#|        -sets the log prefix string ;
+  proc set_logPrefixStr {} {}
+
+#|      -proc get_logSufixStr {} :
+#|        -returns the log sufix string ;
+  proc get_logSufixStr {} {
+    variable logSufixStr
+    return $logSufixStr
+    }
+
+#|      -proc set_logSufixStr {} :
+#|        -sets the log sufix string ;
+  proc set_logSufixStr {} {}
+
+
 #|      -proc get_logOutputStream {} :
 #|        -returns the output stream currently used for log ;
   proc get_logOutputStream {} {
@@ -233,16 +271,20 @@ namespace eval logLib {
     }
 
 #|      -proc logMsg {msg {level 1}} :           
-#|        -prints a message string to the corrent output stream, if the level
-#|         _ of the msg is greater than or equal to the current log level ;
+#|        -prints a message string line to the corrent output stream .
+#|        -if the specified level is higher than the current log level,
+#|         _ no message is output .
+#|        -logPrefixStr and logSufixStr are preppended and appended, resp. ;
   proc logMsg {msg {level 1}} {
+    variable logPrefixStr
+    variable logSufixStr
     variable loSt
     variable logLvl
     variable logScreen
     if {($level > 0) && ($level <= $logLvl)} {
-      puts $loSt $msg
+      puts $loSt "${logPrefixStr}${msg}${logSufixStr}"
       if {($loSt != "stdout") && $logScreen} {
-        puts stdout $msg
+        puts stdout "${logPrefixStr}${msg}${logSufixStr}"
         }
       }
     }
