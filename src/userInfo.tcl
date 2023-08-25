@@ -50,7 +50,7 @@ namespace eval userInfo {
       incr i
       }
     logMsg "initialized indices array indTFL from trajFragList..." 3
-    logMsg "trajFragList: [get_trajFragList]"
+    logMsg "trajFragList: [get_trajFragList]" 2
     }
 #|      -proc get_maxTrajSizeGB {} :
 #|        - ;
