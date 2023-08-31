@@ -493,7 +493,7 @@ namespace eval logLib {
       }
     }
 
-#|      -proc arg_interpreter {args} :
+#|      -proc logLib::arg_interpreter {args} :
 #|        -interpretates a list of pairs of argument-vaule keywords refering to
 #|         _ namespace commands and executes them .
 #|        -returns the list of arg-val pairs of kewords not interpreted .
@@ -504,7 +504,18 @@ namespace eval logLib {
 #|            -format :
 #|              -{arg1 val1 ...} ;
 #|            -acceptable arg values :
-#|              -'set_logName_version', 'set_name' ;;;;
+#|              -'set_logName', 'setLogName', 'logName' :
+#|                -calls the set_logName command .
+#|                -requires 1 argument as value ;
+#|              -'set_logVersion', 'setLogVersion', 'logVersion' :
+#|                -calls the set_logVersion commands .
+#|                -requires 1 argument as value ;
+#|              -'set_logFileName', 'set_logFile', 'setLogFile',
+#|               _ 'setLogFileName', 'logFile', 'logFileName' :
+#|                -calls the set_logFileName command .
+#|                -requires 1 argument as value ;
+#|              -'set_logPrefixStr', 'set_logPrefix', 'setLogPrefix',
+#|               _ 'logPrefix', 'logPrefixStr' ;;;;
   proc arg_interpreter {args} {
     
     }
