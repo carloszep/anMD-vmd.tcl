@@ -9,7 +9,7 @@
 #|  -public software repositories :
 #|    -https://github.com/carloszep/anMD-vmd.tcl ;
 #|  -version information :
-#|    -version :-0.0.3 ;
+#|    -version :-0.0.4 ;
 #|    -changes in progress :
 #|      -definition of the logLib namespace .
 #|      -some procs tested on 3ago23 .
@@ -17,7 +17,11 @@
 #|       _ state_restore commands (not tested yet) .
 #|      -added l_variables variable and add_variables and list_variables
 #|       commands (not tested yet) .
-#|      -state_show command added ;
+#|      -state_show command added .
+#|      -added set_logName and set_version commands .
+#|      -command version renamed to get_logVersion .
+#|      -command set_version renamed to set_logVersion .
+#|      -command set_logName_version deleted ;
 #|    -to do list :
 #|      -to implement a command to interpretate variable arguments .
 #|      -to implement a graphical interface .
@@ -37,10 +41,11 @@
 namespace eval logLib {
 
 #|    -export :
-#|      -version .
 #|      -get_logName .
+#|      -set_logName .
+#|      -get_logVersion .
+#|      -set_logVersion .
 #|      -get_logName_version .
-#|      -set_logName_version .
 #|      -get_logPath .
 #|      -set_logPath .
 #|      -get_logFileName .
@@ -70,7 +75,8 @@ namespace eval logLib {
 #|      -state_restore .
 #|      -state_show .
 #|      -arg_interpreter ;
-  namespace export version get_logName get_logName_version set_logName_version
+  namespace export get_logName set_logName get_logVersion set_logVersion
+  namespace export get_logName_version
   namespace export get_logPath set_logPath get_logFileName set_logFileName
   namespace export get_logPrefixStr set_logPrefixStr
   namespace export get_logSufixStr set_logSufixStr
@@ -94,8 +100,8 @@ namespace eval logLib {
 #|        -version string of the proc, library, namespace, etc., using the logLib .
 #|        -to be included in the default logFileName and in log msgs .
 #|        -default value :
-#|          -"0.0.3" ;;
-  variable logVersionTxt "0.0.3"
+#|          -"0.0.4" ;;
+  variable logVersionTxt "0.0.4"
 #|      -logPath :
 #|        -default value :-"" ;;
   variable logPath ""
@@ -132,19 +138,20 @@ namespace eval logLib {
                              logAppend l_variables l_commands]
 #|      -l_commands :
 #|        -list of the proc names to be exported by the namespace ;;
-  variable l_commands [list version get_logName \
-                            get_logName_version set_logName_version \
+  variable l_commands [list get_logName         set_logName \
+                            get_logVersion      set_logVersion \
+                            get_logName_version \
                             get_logFileName     set_logFileName \
                             get_logPrefixStr    set_logPrefixStr \
                             get_logSufixStr     set_logSufixStr \
                             get_logOutputStream set_logOutputStream \
                             get_logLevel        set_logLevel \
-                            get_logScreen logScreenOn logScreenOff \
-                            get_logAppend logAppendOn logAppendOff \
-                            logMsg logToken logFlush \
-                            add_variables list_variables \
-                            add_commands list_commands \
-                            state_save state_restore state_show \
+                            get_logScreen logScreenOn   logScreenOff \
+                            get_logAppend logAppendOn   logAppendOff \
+                            logMsg        logToken      logFlush \
+                            add_variables       list_variables \
+                            add_commands        list_commands \
+                            state_save    state_restore state_show \
                             arg_interpreter]
 
 #|    -nested namespaces :
@@ -171,18 +178,32 @@ namespace eval logLib {
     }
 
 #|    -commands :
-#|      -proc version {} :
-#|        -returns the version number registered ;
-  proc version {} {
-    variable logVersionTxt
-    return $logVersionTxt
-    }
-
 #|      -proc get_logName {} :
 #|        -returns the strings registered as logNameTxt ;
   proc get_logName {} {
     variable logNameTxt
     return $logNameTxt
+    }
+
+#|      -proc set_logName {name} :
+#|        -sets the logName ;
+  proc set_logName {name} {
+    variable logNameTxt
+    set logNameTxt $name
+    }
+
+#|      -proc get_logVersion {} :
+#|        -returns the version number registered ;
+  proc get_logVersion {} {
+    variable logVersionTxt
+    return $logVersionTxt
+    }
+
+#|      -proc set_logVersion {ver} :
+#|        -sets the logVersion ;
+  proc set_logVersion {ver} {
+    variable logVersionTxt
+    set logVersionTxt $ver
     }
 
 #|      -proc get_logName_version {} :
@@ -192,15 +213,6 @@ namespace eval logLib {
     variable logVersionTxt
 # returns string with library name and version
     return "${logNameTxt}_v.$logVersionTxt"
-    }
-
-#|      -proc set_logName_version {name ver} :
-#|        -sets the logName and the logVersion .
-  proc set_logName_version {name ver} {
-    variable logNameTxt
-    variable logVersionTxt
-    set logNameTxt $name
-    set logVersionTxt $ver
     }
 
 #|      -proc get_logPath {} :
@@ -484,13 +496,15 @@ namespace eval logLib {
 #|      -proc arg_interpreter {args} :
 #|        -interpretates a list of pairs of argument-vaule keywords refering to
 #|         _ namespace commands and executes them .
-#|        -returns the list of arg-val pairs of kewords not interpreted
+#|        -returns the list of arg-val pairs of kewords not interpreted .
 #|        -arguments :
 #|          -args :
 #|            -list of keywords (tokens) with pairs of argument-value .
 #|            -if args is "" returns ""
 #|            -format :
-#|              -{arg1 val1 ...} ;;;;
+#|              -{arg1 val1 ...} ;
+#|            -acceptable arg values :
+#|              -'set_logName_version', 'set_name' ;;;;
   proc arg_interpreter {args} {
     
     }
