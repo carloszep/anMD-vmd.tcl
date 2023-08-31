@@ -16,7 +16,8 @@
 #|      -implemented the nested state namespace and the state_save and
 #|       _ state_restore commands (not tested yet) .
 #|      -added l_variables variable and add_variables and list_variables
-#|       commands (not tested yet) ;
+#|       commands (not tested yet) .
+#|      -state_show command added ;
 #|    -to do list :
 #|      -to implement a command to interpretate variable arguments .
 #|      -to implement a graphical interface .
@@ -67,6 +68,7 @@ namespace eval logLib {
 #|      -list_commands .
 #|      -state_save .
 #|      -state_restore .
+#|      -state_show .
 #|      -arg_interpreter ;
   namespace export version get_logName get_logName_version set_logName_version
   namespace export get_logPath set_logPath get_logFileName set_logFileName
@@ -78,7 +80,7 @@ namespace eval logLib {
   namespace export get_logAppend logAppendOn logAppendOff
   namespace export add_variables list_variables
   namespace export add_commands list_commands
-  namespace export state_save state_restore
+  namespace export state_save state_restore state_show
   namespace export arg_interpreter
 
 #|    -variables :
@@ -127,7 +129,7 @@ namespace eval logLib {
 #|         _ ::logLib::state_save and ::logLib::state_restore commands ;
   variable l_variables [list logNameTxt logVersionTxt logPath logFileName \
                              logPrefixStr logSufixStr loSt logLvl logScreen \
-                             logAppend]
+                             logAppend l_variables l_commands]
 #|      -l_commands :
 #|        -list of the proc names to be exported by the namespace ;;
   variable l_commands [list version get_logName \
@@ -140,7 +142,9 @@ namespace eval logLib {
                             get_logScreen logScreenOn logScreenOff \
                             get_logAppend logAppendOn logAppendOff \
                             logMsg logToken logFlush \
+                            add_variables list_variables \
                             add_commands list_commands \
+                            state_save state_restore state_show \
                             arg_interpreter]
 
 #|    -nested namespaces :
@@ -438,28 +442,12 @@ namespace eval logLib {
 #|         _ to the nested namespace 'state' .
 #|        -sets the state::saved variable to 1 ;
   proc state_save {} {
-    variable logNameTxt
-    variable logVersionTxt
-    variable logPath
-    variable logFileName
-    variable logPrefixStr
-    variable logSufixStr
-    variable loSt
-    variable logLvl
-    variable logScreen
-    variable logAppend
-    variable l_commands
-    set state::logNameTxt $logNameTxt
-    set state::logVersionTxt $logVersionTxt
-    set state::logPath $logPath
-    set state::logFileName $logFileName
-    set state::logPrefixStr $logPrefixStr
-    set state::logSufixStr $logSufixStr
-    set state::loSt $loSt
-    set state::logLvl $logLvl
-    set state::logScreen $logScreen
-    set state::logAppend $logAppend
-    set state::l_commands $l_commands
+    variable l_variables
+    foreach var ${l_variables} {
+      variable $var
+      set state::$var [set var]
+      }
+    set state::saved 1
     }
 
 #|      -proc state_restore {} :
@@ -467,28 +455,30 @@ namespace eval logLib {
 #|         _ nested namespace to the ::logLib:: namespace variables .
 #|        -if the value of ::logLib::state::saved is 0 does nothing ;
   proc state_restore {} {
-    variable logNameTxt 
-    variable logVersionTxt 
-    variable logPath 
-    variable logFileName 
-    variable logPrefixStr 
-    variable logSufixStr 
-    variable loSt 
-    variable logLvl 
-    variable logScreen 
-    variable logAppend 
-    variable l_commands 
-    set logNameTxt $state::logNameTxt
-    set logVersionTxt $state::logVersionTxt
-    set logPath $state::logPath
-    set logFileName $state::logFileName
-    set logPrefixStr $state::logPrefixStr
-    set logSufixStr $state::logSufixStr
-    set loSt $state::loSt
-    set logLvl $state::logLvl
-    set logScreen $state::logScreen
-    set logAppend $state::logAppend
-    set l_commands $state::l_commands
+    variable l_variables
+    if {$state::saved} {
+      foreach var ${l_variables} {
+        variable $var
+        set $var $state::[set var]
+        }
+      }
+    }
+
+#|      -proc state_show {{lvl 1}} :
+#|        -prints to log variable names and values specified in l_variables .
+#|        -if state::saved is 0 does nothing .
+#|        -arguments :
+#|          -lvl :-output log level for logMsg output ;;;
+  proc state_show {{lvl 1}} {
+    variable l_variables
+    if {$state::saved} {
+      foreach var ${l_variables} {
+        variable $var
+        logMsg "$var [set $var]" $lvl
+        }
+    } else {
+      logMsg "state::saved 0" $lvl
+      }
     }
 
 #|      -proc arg_interpreter {args} :
