@@ -3,7 +3,7 @@
 #|   _ libraries to manage generic log files .
 #|  -dates :
 #|    -created :-2023-04-28.Fri ;
-#|    -modified :-2023-08-03.Thu ;;
+#|    -modified :-2023-08-31.Thu ;;
 #|  -authors and contributors :
 #|    -Carlos Z. Gómez Castro ;
 #|  -public software repositories :
@@ -13,7 +13,14 @@
 #|    -changes in progress :
 #|      -definition of the logLib namespace .
 #|      -some procs tested on 3ago23 .
-#|      -version changed to 0.0.2 after adding logAppend procs ;;
+#|      -implemented the nested state namespace and the state_save and
+#|       _ state_restore commands (not tested yet) ;
+#|      -version changed to 0.0.2 after adding logAppend procs ;
+#|    -to do list :
+#|      -to implement a command to interpretate variable arguments .
+#|      -to implement a graphical interface .
+#|      -to test saving the state of the namespace .
+#|      -to implement an internal namespace test command ;;
 #|  -usage :
 #|    -1. source within another script as :
 #|      -source logLib.tcl ;
@@ -26,6 +33,7 @@
 
 #|  -namespace logLib :
 namespace eval logLib {
+
 #|    -export :
 #|      -version .
 #|      -get_logName .
@@ -53,7 +61,10 @@ namespace eval logLib {
 #|      -logAppendOn .
 #|      -logAppendOff .
 #|      -add_commands .
-#|      -list_commands ;
+#|      -list_commands .
+#|      -state_save .
+#|      -state_restore .
+#|      -arg_interpreter ;
   namespace export version get_logName get_logName_version set_logName_version
   namespace export get_logPath set_logPath get_logFileName set_logFileName
   namespace export get_logPrefixStr set_logPrefixStr
@@ -63,6 +74,9 @@ namespace eval logLib {
   namespace export get_logScreen logScreenOn logScreenOff
   namespace export get_logAppend logAppendOn logAppendOff
   namespace export add_commands list_commands
+  namespace export state_save state_restore
+  namespace export arg_interpreter
+
 #|    -variables :
 #|      -logNameTxt :
 #|        -name of the proc, library, namespace, etc., using the logLib .
@@ -115,7 +129,31 @@ namespace eval logLib {
                             get_logScreen logScreenOn logScreenOff \
                             get_logAppend logAppendOn logAppendOff \
                             logMsg logToken logFlush \
-                            add_commands list_commands]
+                            add_commands list_commands \
+                            arg_interpreter]
+
+#|    -nested namespaces :
+#|      -state :
+#|        -contains a copy of all (::logLib::) namespace variables .
+#|        -intended to save the state of the namespace .
+#|        -uses the state_save and state_restore commands .
+#|        -saved variable :
+#|          -it is initialized with the value of 0 .
+#|          -its value changes to 1 after running ::logLib::state_save ;;;
+  namespace eval state {
+    variable saved 0
+    variable logNameTxt ""
+    variable logVersionTxt ""
+    variable logPath ""
+    variable logFileName ""
+    variable logPrefixStr ""
+    variable logSufixStr ""
+    variable loSt stdout ""
+    variable logLvl ""
+    variable logScreen ""
+    variable logAppend ""
+    variable l_commands ""
+    }
 
 #|    -commands :
 #|      -proc version {} :
@@ -369,6 +407,74 @@ namespace eval logLib {
     variable l_commands
     return $l_commands
     }
+
+#|      -proc state_save {} :
+#|        -copy the values of all (::logLig::) namespace variables
+#|         _ to the nested namespace 'state' .
+#|        -sets the state::saved variable to 1 ;
+  proc state_save {} {
+    variable logNameTxt
+    variable logVersionTxt
+    variable logPath
+    variable logFileName
+    variable logPrefixStr
+    variable logSufixStr
+    variable loSt
+    variable logLvl
+    variable logScreen
+    variable logAppend
+    variable l_commands
+    set state::logNameTxt $logNameTxt
+    set state::logVersionTxt $logVersionTxt
+    set state::logPath $logPath
+    set state::logFileName $logFileName
+    set state::logPrefixStr $logPrefixStr
+    set state::logSufixStr $logSufixStr
+    set state::loSt $loSt
+    set state::logLvl $logLvl
+    set state::logScreen $logScreen
+    set state::logAppend $logAppend
+    set state::l_commands $l_commands
+    }
+
+#|      -proc state_restore {} :
+#|        -copy the values of all the variables within the '::logLib::state::'
+#|         _ nested namespace to the ::logLib:: namespace variables .
+#|        -if the value of ::logLib::state::saved is 0 does nothing ;
+  proc state_restore {} {
+    variable logNameTxt 
+    variable logVersionTxt 
+    variable logPath 
+    variable logFileName 
+    variable logPrefixStr 
+    variable logSufixStr 
+    variable loSt 
+    variable logLvl 
+    variable logScreen 
+    variable logAppend 
+    variable l_commands 
+    set logNameTxt $state::logNameTxt
+    set logVersionTxt $state::logVersionTxt
+    set logPath $state::logPath
+    set logFileName $state::logFileName
+    set logPrefixStr $state::logPrefixStr
+    set logSufixStr $state::logSufixStr
+    set loSt $state::loSt
+    set logLvl $state::logLvl
+    set logScreen $state::logScreen
+    set logAppend $state::logAppend
+    set l_commands $state::l_commands
+    }
+
+#|      -proc arg_interpreter {} :
+#|        -interpretates a list of pairs of argument-vaule keywords refering to
+#|         _ namespace commands and executes them .
+#|        -returns the list of arg-val pairs of kewords not interpreted
+#|        -arguments :
+#|          -args :
+#|            -list of keywords (tokens) with pairs of argument-value .
+#|            -format :
+#|              -{arg1 val1 ...} ;;;;
 
 #|      - ;;
 
