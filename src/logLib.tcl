@@ -9,13 +9,14 @@
 #|  -public software repositories :
 #|    -https://github.com/carloszep/anMD-vmd.tcl ;
 #|  -version information :
-#|    -current version :-0.0.2 ;
+#|    -version :-0.0.3 ;
 #|    -changes in progress :
 #|      -definition of the logLib namespace .
 #|      -some procs tested on 3ago23 .
 #|      -implemented the nested state namespace and the state_save and
-#|       _ state_restore commands (not tested yet) ;
-#|      -version changed to 0.0.2 after adding logAppend procs ;
+#|       _ state_restore commands (not tested yet) .
+#|      -added l_variables variable and add_variables and list_variables
+#|       commands (not tested yet) ;
 #|    -to do list :
 #|      -to implement a command to interpretate variable arguments .
 #|      -to implement a graphical interface .
@@ -60,6 +61,8 @@ namespace eval logLib {
 #|      -get_logAppend .
 #|      -logAppendOn .
 #|      -logAppendOff .
+#|      -add_variables .
+#|      -list_variables .
 #|      -add_commands .
 #|      -list_commands .
 #|      -state_save .
@@ -73,6 +76,7 @@ namespace eval logLib {
   namespace export get_logLevel set_logLevel logMsg logToken logFlush
   namespace export get_logScreen logScreenOn logScreenOff
   namespace export get_logAppend logAppendOn logAppendOff
+  namespace export add_variables list_variables
   namespace export add_commands list_commands
   namespace export state_save state_restore
   namespace export arg_interpreter
@@ -88,8 +92,8 @@ namespace eval logLib {
 #|        -version string of the proc, library, namespace, etc., using the logLib .
 #|        -to be included in the default logFileName and in log msgs .
 #|        -default value :
-#|          -"0.0.2" ;;
-  variable logVersionTxt "0.0.2"
+#|          -"0.0.3" ;;
+  variable logVersionTxt "0.0.3"
 #|      -logPath :
 #|        -default value :-"" ;;
   variable logPath ""
@@ -117,6 +121,13 @@ namespace eval logLib {
 #|      -logAppend :
 #|        -default value :-1 ;;
   variable logAppend 1
+#|      -l_variables :
+#|        -contains the names of all namespace variables in a list .
+#|        -are used as "state" variables to be used in
+#|         _ ::logLib::state_save and ::logLib::state_restore commands ;
+  variable l_variables [list logNameTxt logVersionTxt logPath logFileName \
+                             logPrefixStr logSufixStr loSt logLvl logScreen \
+                             logAppend]
 #|      -l_commands :
 #|        -list of the proc names to be exported by the namespace ;;
   variable l_commands [list version get_logName \
@@ -394,6 +405,20 @@ namespace eval logLib {
     set logAppend 0
     }
 
+#|      -proc add_variables {new variables} :
+#|        -adds variable names to the l_variables list ;
+  proc add_variables {new variables} {
+    variable l_variables
+    set l_variables [list {*}$l_variables {*}$new_variables]
+    }
+
+#|      -proc list_variables {} :
+#|        -returns a list of variable names stored in l_variables ;
+  proc list_variables {} {
+    variable l_variables
+    return $l_variables
+    }
+
 #|      -proc add_commands {new_commands} :
 #|        -adds command names to the l_commands list ;
   proc add_commands {new_commands} {
@@ -466,16 +491,19 @@ namespace eval logLib {
     set l_commands $state::l_commands
     }
 
-#|      -proc arg_interpreter {} :
+#|      -proc arg_interpreter {args} :
 #|        -interpretates a list of pairs of argument-vaule keywords refering to
 #|         _ namespace commands and executes them .
 #|        -returns the list of arg-val pairs of kewords not interpreted
 #|        -arguments :
 #|          -args :
 #|            -list of keywords (tokens) with pairs of argument-value .
+#|            -if args is "" returns ""
 #|            -format :
 #|              -{arg1 val1 ...} ;;;;
-
+  proc arg_interpreter {args} {
+    
+    }
 #|      - ;;
 
   }   ;# namespace eval logLib
