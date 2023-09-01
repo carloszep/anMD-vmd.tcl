@@ -9,23 +9,11 @@
 #|  -public software repositories :
 #|    -https://github.com/carloszep/anMD-vmd.tcl ;
 #|  -version information :
-#|    -version :-0.0.4 ;
+#|    -version :-0.0.5 ;
 #|    -changes in progress :
-#|      -definition of the logLib namespace .
-#|      -some procs tested on 3ago23 .
-#|      -implemented the nested state namespace and the state_save and
-#|       _ state_restore commands (not tested yet) .
-#|      -added l_variables variable and add_variables and list_variables
-#|       commands (not tested yet) .
-#|      -state_show command added .
-#|      -added set_logName and set_version commands .
-#|      -command version renamed to get_logVersion .
-#|      -command set_version renamed to set_logVersion .
-#|      -command set_logName_version deleted ;
+#|      -command arg_interpreter added ;
 #|    -to do list :
-#|      -to implement a command to interpretate variable arguments .
 #|      -to implement a graphical interface .
-#|      -to test saving the state of the namespace .
 #|      -to implement an internal namespace test command ;;
 #|  -usage :
 #|    -1. source within another script as :
@@ -100,8 +88,8 @@ namespace eval logLib {
 #|        -version string of the proc, library, namespace, etc., using the logLib .
 #|        -to be included in the default logFileName and in log msgs .
 #|        -default value :
-#|          -"0.0.4" ;;
-  variable logVersionTxt "0.0.4"
+#|          -"0.0.5" ;;
+  variable logVersionTxt "0.0.5"
 #|      -logPath :
 #|        -default value :-"" ;;
   variable logPath ""
@@ -287,9 +275,12 @@ namespace eval logLib {
     return $logPrefixStr
     }
 
-#|      -proc set_logPrefixStr {} :
+#|      -proc set_logPrefixStr {prefix} :
 #|        -sets the log prefix string ;
-  proc set_logPrefixStr {} {}
+  proc set_logPrefixStr {prefix} {
+    variable logPrefixStr
+    set logPrefixStr $prefix
+    }
 
 #|      -proc get_logSufixStr {} :
 #|        -returns the log sufix string ;
@@ -298,9 +289,12 @@ namespace eval logLib {
     return $logSufixStr
     }
 
-#|      -proc set_logSufixStr {} :
+#|      -proc set_logSufixStr {sufix} :
 #|        -sets the log sufix string ;
-  proc set_logSufixStr {} {}
+  proc set_logSufixStr {sufix} {
+    variable logSufixStr
+    set logSufixStr $sufix
+    }
 
 
 #|      -proc get_logOutputStream {} :
@@ -421,9 +415,9 @@ namespace eval logLib {
     set logAppend 0
     }
 
-#|      -proc add_variables {new variables} :
+#|      -proc add_variables {new_variables} :
 #|        -adds variable names to the l_variables list ;
-  proc add_variables {new variables} {
+  proc add_variables {new_variables} {
     variable l_variables
     set l_variables [list {*}$l_variables {*}$new_variables]
     }
@@ -504,20 +498,60 @@ namespace eval logLib {
 #|            -format :
 #|              -{arg1 val1 ...} ;
 #|            -acceptable arg values :
-#|              -'set_logName', 'setLogName', 'logName' :
-#|                -calls the set_logName command .
-#|                -requires 1 argument as value ;
-#|              -'set_logVersion', 'setLogVersion', 'logVersion' :
-#|                -calls the set_logVersion commands .
-#|                -requires 1 argument as value ;
+#|              -'set_logName', 'setLogName', 'logName' .
+#|              -'set_logVersion', 'setLogVersion', 'logVersion' .
 #|              -'set_logFileName', 'set_logFile', 'setLogFile',
-#|               _ 'setLogFileName', 'logFile', 'logFileName' :
-#|                -calls the set_logFileName command .
-#|                -requires 1 argument as value ;
+#|               _ 'setLogFileName', 'logFile', 'logFileName' .
 #|              -'set_logPrefixStr', 'set_logPrefix', 'setLogPrefix',
-#|               _ 'logPrefix', 'logPrefixStr' ;;;;
+#|               _ 'logPrefix', 'logPrefixStr' .
+#|              -'set_logSufixStr', 'set_logSufix', 'setLogSufix',
+#|               _ 'logSufix', 'logSufixStr' .
+#|              -'set_logOutputStream', 'set_logOutput', 'setlogOutput',
+#|               _ 'logOutput', 'logStream', 'setLogOutputStream' .
+#|              -'set_logLevel', 'setLogLevel', 'logLevel' ;;;
+#|        -notes :
+#|          -this command may provide a shell to implement prior processing
+#|           _ for several commands .
+#|          -provides overloading of commands .
+#|          -for now, all arg-invoked commands requires a single argument
+#|           _ as value .
+#|          -the first acceptable arg value corresponds to the command
+#|           _ to be called ;;
   proc arg_interpreter {args} {
-    
+    set remaining_arg_val {}
+    if {[expr {[llength $args]%2}] == 0} {
+      if {[llength $args] > 0} {
+        foreach {arg val} $args {
+          switch [string tolower $arg] {
+            "set_logname" -  "setlogname" - "logname" {
+              set_logName $val}
+            "set_logversion" - "setlogversion" - "logversion" {
+              set_logVersion $val}
+            "set_logfilename" - "set_logfile" - "setlogfile" \
+              - "setlogfilename" - "logfile" - "logfilename" {
+              set_logFileName $val}
+            "set_logprefixstr" - "set_logprefix" - "setlogprefix" \
+              - "logprefix" - "logPrefixStr" {
+              set_logPrefixStr $val}
+            "set_logsufixstr" - "set_logsufix" - "setlogsufix" \
+              - "logsufix" - "logsufixstr" {
+              set_logSufixStr $val}
+            "set_logoutputstream" - "set_logoutput" - "setlogoutput" \
+              - "logoutput" - "logstream" - "setlogoutputstream" {
+              set_logOutputStream $val}
+            "set_loglevel" - "setloglevel" - "loglevel" {
+              set_logLevel $val}
+            default {
+              set remaining_arg_val [list {*}${remaining_arg_val} $arg $val]
+              }
+            }
+          }
+        }
+    } else {
+      logMsg "logLib::arg_interpreter: Odd number of optional arguments! args: $args"
+      return ""
+      }
+    return ${remaining_arg_val}
     }
 #|      - ;;
 
