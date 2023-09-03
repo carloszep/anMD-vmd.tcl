@@ -231,7 +231,7 @@ namespace eval logLib {
 #|          -fileName :
 #|            -acceptable values :
 #|              -a string usable as a file name .
-#|              -'none', '""', 'stdout' :
+#|              -'none', '""', 'stdout', 'screen' :
 #|                -deactivate the output to a log file .
 #|                -the output stream (loSt) is set to stdout ;
 #|              -'auto', 'default' :
@@ -245,7 +245,7 @@ namespace eval logLib {
     variable loSt
     if {$loSt != "stdout"} {close $loSt}
     switch [string tolower $fileName] {
-      "none" - "" - "stdout" {
+      "none" - "" - "stdout" - "screen" {
         set loSt stdout
         set logFileName ""
         }
