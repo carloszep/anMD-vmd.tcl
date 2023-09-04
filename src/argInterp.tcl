@@ -10,9 +10,11 @@
 #|    -declare specific keywords and aliases :
 #|      -accordingly to the type of action intended for .
 #|      -the declaration can be made at "declaration time" or later* ;
-#|    -contain properties that dictate the bihavior of the arg kewords :
+#|    -contain properties that dictate the behavior of the arg kewords :
 #|      -decide if the argument can be used more than once .
-#|      -type of argument (flag, var-val pair, procedural arg, ...) ;;
+#|      -type of argument (flag, var-val pair, procedural arg, ...) ;
+#|    -admit different formats for the arguments :
+#|      -'var val', 'val=val', '-var val', --var{val}, ... ;;
 #|  -version information :
 #|    -version :-0.0.1 ;
 #|    -changes in progress in this version :
