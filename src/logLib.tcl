@@ -513,8 +513,8 @@ namespace eval logLib {
 #|          -this command may provide a shell to implement prior processing
 #|           _ for several commands .
 #|          -provides overloading of commands .
-#|          -for now, all arg-invoked commands requires a single argument
-#|           _ as value .
+#|          -most arg-invoked commands requires a single argument
+#|           _ as value, except for set_logoutputstream .
 #|          -the first acceptable arg value corresponds to the command
 #|           _ to be called ;;
   proc arg_interpreter {args} {
@@ -538,7 +538,7 @@ namespace eval logLib {
               set_logSufixStr $val}
             "set_logoutputstream" - "set_logoutput" - "setlogoutput" \
               - "logoutput" - "logstream" - "setlogoutputstream" - "loSt" {
-              set_logOutputStream $val}
+              [eval set_logOutputStream $val]}
             "set_loglevel" - "setloglevel" - "loglevel" {
               set_logLevel $val}
             default {
