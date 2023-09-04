@@ -523,7 +523,7 @@ namespace eval logLib {
       if {[llength $args] > 0} {
         foreach {arg val} $args {
           switch [string tolower $arg] {
-            "set_logname" -  "setlogname" - "logname" {
+            "set_logname" - "setlogname" - "logname" {
               set_logName $val}
             "set_logversion" - "setlogversion" - "logversion" {
               set_logVersion $val}
@@ -537,7 +537,7 @@ namespace eval logLib {
               - "logsufix" - "logsufixstr" {
               set_logSufixStr $val}
             "set_logoutputstream" - "set_logoutput" - "setlogoutput" \
-              - "logoutput" - "logstream" - "setlogoutputstream" {
+              - "logoutput" - "logstream" - "setlogoutputstream" - "loSt" {
               set_logOutputStream $val}
             "set_loglevel" - "setloglevel" - "loglevel" {
               set_logLevel $val}
