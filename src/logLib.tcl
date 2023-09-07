@@ -3,7 +3,7 @@
 #|   _ libraries to manage generic log files .
 #|  -dates :
 #|    -created :-2023-04-28.Fri ;
-#|    -modified :-2023-08-31.Thu ;;
+#|    -modified :-2023-09-07.Thu ;;
 #|  -authors and contributors :
 #|    -Carlos Z. Gómez Castro ;
 #|  -public software repositories :
@@ -11,7 +11,8 @@
 #|  -version information :
 #|    -version :-0.0.5 ;
 #|    -changes in progress :
-#|      -command arg_interpreter added ;
+#|      -command arg_interpreter added .
+#|      -a message is printed when the logLig.tcl file is sourced ;
 #|    -to do list :
 #|      -to implement a graphical interface .
 #|      -to implement an internal namespace test command ;;
@@ -508,7 +509,7 @@ namespace eval logLib {
 #|               _ 'logSufix', 'logSufixStr' .
 #|              -'set_logOutputStream', 'set_logOutput', 'setlogOutput',
 #|               _ 'logOutput', 'logStream', 'setLogOutputStream' .
-#|              -'set_logLevel', 'setLogLevel', 'logLevel' ;;;
+#|              -'set_logLevel', 'setLogLevel', 'logLevel', 'logLvl' ;;;
 #|        -notes :
 #|          -this command may provide a shell to implement prior processing
 #|           _ for several commands .
@@ -539,7 +540,7 @@ namespace eval logLib {
             "set_logoutputstream" - "set_logoutput" - "setlogoutput" \
               - "logoutput" - "logstream" - "setlogoutputstream" - "loSt" {
               [eval set_logOutputStream $val]}
-            "set_loglevel" - "setloglevel" - "loglevel" {
+            "set_loglevel" - "setloglevel" - "loglevel" - "loglvl" {
               set_logLevel $val}
             default {
               set remaining_arg_val [list {*}${remaining_arg_val} $arg $val]
@@ -558,4 +559,6 @@ namespace eval logLib {
   }   ;# namespace eval logLib
 
 #|  - ;
+# printing information at 'source' time
+puts "[::logLib::get_logName_version]: Library to manage log information messages."
 
