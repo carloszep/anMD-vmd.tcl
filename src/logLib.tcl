@@ -360,7 +360,7 @@ namespace eval logLib {
 #|        -sets the minimum output level to print log msgs ;
   proc set_logLevel {level} {
     variable logLvl
-    logMsg "logLib::get_logLevel: logLvl set to: $logLvl" 3
+    logMsg "logLib::get_logLevel: logLvl set to: $level" 3
     set logLvl $level
     }
 
