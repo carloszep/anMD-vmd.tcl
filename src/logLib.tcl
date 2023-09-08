@@ -9,13 +9,15 @@
 #|  -public software repositories :
 #|    -https://github.com/carloszep/anMD-vmd.tcl ;
 #|  -version information :
-#|    -version :-0.0.5 ;
+#|    -version :-0.0.6 ;
 #|    -changes in progress :
 #|      -command arg_interpreter added .
-#|      -a message is printed when the logLig.tcl file is sourced ;
+#|      -a message is printed when the logLig.tcl file is sourced .
+#|      -incorporated log messages to all commands ;
 #|    -to do list :
 #|      -to implement a graphical interface .
-#|      -to implement an internal namespace test command ;;
+#|      -to implement an internal namespace test command .
+#|      -to add add_state_variables command *? ;;
 #|  -usage :
 #|    -1. source within another script as :
 #|      -source logLib.tcl ;
@@ -159,7 +161,7 @@ namespace eval logLib {
     variable logFileName ""
     variable logPrefixStr ""
     variable logSufixStr ""
-    variable loSt stdout ""
+    variable loSt ""
     variable logLvl ""
     variable logScreen ""
     variable logAppend ""
@@ -171,6 +173,7 @@ namespace eval logLib {
 #|        -returns the strings registered as logNameTxt ;
   proc get_logName {} {
     variable logNameTxt
+    logMsg "logLib::get_logName: returned logNameTxt: $logNameTxt" 4
     return $logNameTxt
     }
 
@@ -178,6 +181,7 @@ namespace eval logLib {
 #|        -sets the logName ;
   proc set_logName {name} {
     variable logNameTxt
+    logMsg "logLib::set_logName: logNameTxt set to: $name" 3
     set logNameTxt $name
     }
 
@@ -185,6 +189,7 @@ namespace eval logLib {
 #|        -returns the version number registered ;
   proc get_logVersion {} {
     variable logVersionTxt
+    logMsg "logLib::get_logVersion: returned logVersionTxt: $logVersionTxt" 4
     return $logVersionTxt
     }
 
@@ -192,6 +197,7 @@ namespace eval logLib {
 #|        -sets the logVersion ;
   proc set_logVersion {ver} {
     variable logVersionTxt
+    logMsg "logLib::set_logVersion: logVersionTxt set to: $ver" 3
     set logVersionTxt $ver
     }
 
@@ -200,7 +206,7 @@ namespace eval logLib {
   proc get_logName_version {} {
     variable logNameTxt
     variable logVersionTxt
-# returns string with library name and version
+    logMsg "logLib::get_logName_version: returned: ${logNameTxt}_v.$logVersionTxt" 4
     return "${logNameTxt}_v.$logVersionTxt"
     }
 
@@ -208,6 +214,7 @@ namespace eval logLib {
 #|        -returns the path registered for the log ;
   proc get_logPath {} {
     variable logPath
+    logMsg "logLib::get_logPath: returned logPath: $logPath" 4
     return $logPath
     }
 
@@ -215,6 +222,7 @@ namespace eval logLib {
 #|        -sets the path prepended to the log file ;
   proc set_logPath {path} {
     variable logPath
+    logMsg "logLib::set_logPath: logPath set to: $path" 3
     set logPath $path
     }
 
@@ -222,6 +230,7 @@ namespace eval logLib {
 #|        -returns the name of the file to be used as output stream ;
   proc get_logFileName {} {
     variable logFileName
+    logMsg "logLib::get_logFileName: returned logFileName: $logFileName" 4
     return $logFileName
     }
 
@@ -244,35 +253,50 @@ namespace eval logLib {
     variable logFileName
     variable logAppend
     variable loSt
-    if {$loSt != "stdout"} {close $loSt}
+    state_save   ;# saving namespace variables
+    set_logPrefix "logLib::set_logFileName: "
+    if {$loSt != "stdout"} {
+      logMsg "closing current log output stream..." 2
+      close $loSt
+      }
     switch [string tolower $fileName] {
       "none" - "" - "stdout" - "screen" {
+        logMsg "set logFileName to: ''" 3
+        logMsg "sending log messages to 'stdout'" 2
         set loSt stdout
         set logFileName ""
         }
       "auto" - "default" {
         set logFileName "log_[get_logName_version].txt"
+        logMsg "set logFileName to: $logFileName" 2
         if {([file exists ${logPath}${logFileName}]) && ($logAppend)} {
+          logMsg "appending log messages to: ${logPath}${logFileName}" 3
           set loSt [open ${logPath}${logFileName} a]
         } else {
+          logMsg "sending log messages to new file: ${logPath}${logFileName}" 3
           set loSt [open ${logPath}${logFileName} w]
           }
         }
       default {
         set logFileName $fileName
+        logMsg "set logFileName to: $logFileName" 2
         if {([file exists ${logPath}${logFileName}]) && ($logAppend)} {
+          logMsg "appending log messages to: ${logPath}${logFileName}" 3
           set loSt [open ${logPath}${logFileName} a]
         } else {
+          logMsg "sending log messages to new file: ${logPath}${logFileName}" 3
           set loSt [open ${logPath}${logFileName} w]
           }
         }
       }
+    state_restore    ;# restoring namespace variables
     }
 
 #|      -proc get_logPrefixStr {} :
 #|        -returns the log prefix string ;
   proc get_logPrefixStr {} {
     variable logPrefixStr
+    logMsg "logLib::get_logPrefixStr: returned logPrefixStr: $logPrefixStr" 4
     return $logPrefixStr
     }
 
@@ -280,6 +304,7 @@ namespace eval logLib {
 #|        -sets the log prefix string ;
   proc set_logPrefixStr {prefix} {
     variable logPrefixStr
+    logMsg "logLib::set_logPrefixStr: logPrefixStr set to: $prefix" 3
     set logPrefixStr $prefix
     }
 
@@ -287,6 +312,7 @@ namespace eval logLib {
 #|        -returns the log sufix string ;
   proc get_logSufixStr {} {
     variable logSufixStr
+    logMsg "logLib::get_logSufixStr: returned logSufixStr: $logSufixStr" 4
     return $logSufixStr
     }
 
@@ -294,6 +320,7 @@ namespace eval logLib {
 #|        -sets the log sufix string ;
   proc set_logSufixStr {sufix} {
     variable logSufixStr
+    logMsg "logLib::set_logSufixStr: logSufixStr set to: $sufix" 3
     set logSufixStr $sufix
     }
 
@@ -302,6 +329,7 @@ namespace eval logLib {
 #|        -returns the output stream currently used for log ;
   proc get_logOutputStream {} {
     variable loSt
+    logMsg "logLib::get_logOutputStream: returned loSt: $loSt:" 4
     return $loSt
     }
 
@@ -311,15 +339,20 @@ namespace eval logLib {
   proc set_logOutputStream {stream fileName} {
     variable loSt
     variable logFileName
-    if {$loSt != "stdout"} {close $loSt}
+    if {$loSt != "stdout"} {
+      logMsg "logLib::set_logOutputStream: closing current log output stream..." 2
+      close $loSt
+      }
+    logMsg "logLib::set_logOutputStream: loSt and logFileName set to: $stream $fileName" 2
     set loSt $stream
     set logFileName $fileName
     }
 
-#|      -proc get_logLevel {} :     
+#|      -proc get_logLevel {} :
 #|        -returns the minimum output level to print log msgs ;
   proc get_logLevel {} {
     variable logLvl
+    logMsg "logLib::get_logLevel: returned logLvl: $logLvl" 4
     return $logLvl
     }
 
@@ -327,10 +360,11 @@ namespace eval logLib {
 #|        -sets the minimum output level to print log msgs ;
   proc set_logLevel {level} {
     variable logLvl
+    logMsg "logLib::get_logLevel: logLvl set to: $logLvl" 3
     set logLvl $level
     }
 
-#|      -proc logMsg {msg {level 1}} :           
+#|      -proc logMsg {msg {level 1}} :
 #|        -prints a message string line to the corrent output stream .
 #|        -if the specified level is higher than the current log level,
 #|         _ no message is output .
@@ -342,25 +376,37 @@ namespace eval logLib {
     variable logLvl
     variable logScreen
     if {($level > 0) && ($level <= $logLvl)} {
+#      logMsg "logLib::logMsg: message sent to output stream: $loSt" 3
+#      logMsg "logLib::logMsg:   at log Level: $level" 4
+#      logMsg "logLib::logMsg:   message: $level" 4
       puts $loSt "${logPrefixStr}${msg}${logSufixStr}"
       if {($loSt != "stdout") && $logScreen} {
+#        logMsg "logLib::logMsg:   message sent also to stdout" 3
         puts stdout "${logPrefixStr}${msg}${logSufixStr}"
         }
+    } else {
+#      logMsg "logLib::logMsg: log message not output due to log level" 3
       }
     }
 
 #|      -proc logToken {msg {level 1}} :
 #|        -prints a string to the corrent out stream, with no new line, if the
-#|         _ lvl of the msg is greater than or equal to the current log lvl ;
+#|         _ lvl of the msg is greater than or equal to the current log lvl .
+#|        -special scape characters such as '\t' or '\n' can be printed ;
    proc logToken {msg {level 1}} {
     variable loSt
     variable logLvl
     variable logScreen
     if {($level > 0) && ($level <= $logLvl)} {
+      logMsg "logLib::logToken: token sent to output stream: $loSt" 3
+      logMsg "logLib::logToken:   at log Level: $level toke: $level" 4
       puts -nonewline $loSt $msg
       if {($loSt != "stdout") && $logScreen} {
+        logMsg "logLib::logToken:   token sent also to stdout" 3
         puts -nonewline stdout $msg
         }
+    } else {
+      logMsg "logLib::logToken: token not output due to log level" 3
       }
     }
 
@@ -368,6 +414,7 @@ namespace eval logLib {
 #|        -flush log messages printed into a file ;
   proc logFlush {} {
     variable loSt
+    logMsg "logLib::logFlush: Flushing output stream buffer." 4
     if {$loSt != "stdout"} {flush $loSt}
     }
 
@@ -375,6 +422,7 @@ namespace eval logLib {
 #|        -returns the value of logScreen ;
   proc get_logScreen {} {
     variable logScreen
+    logMsg "logLib::get_logScreen: returned logScreen: $logScreen" 4
     return $logScreen
     }
 
@@ -384,6 +432,7 @@ namespace eval logLib {
 #|        -allows sending log messages to both the screen and a file ;
   proc logScreenOn {} {
     variable logScreen
+    logMsg "logLib::logScreenOn: logScreen set to: 1" 3
     set logScreen 1
     }
 
@@ -392,6 +441,7 @@ namespace eval logLib {
 #|        -if no log file is specified the output will be sent to stdout anyway ;
   proc logScreenOff {} {
     variable logScreen
+    logMsg "logLib::logScreenOff: logScreen set to: 0" 3
     set logScreen 0
     }
 
@@ -399,6 +449,7 @@ namespace eval logLib {
 #|        -returns the value of logAppend ;
   proc get_logAppend {} {
     variable logAppend
+    logMsg "logLib::get_logAppend: returned logAppend: $logAppend" 4
     return $logAppend
     }
 
@@ -406,6 +457,7 @@ namespace eval logLib {
 #|        -allows to append log messages to a reoppened file ;
   proc logAppendOn {} {
     variable logAppend
+    logMsg "logLib::logAppendOn: logAppend set to: 1" 3
     set logAppend 1
     }
 
@@ -413,6 +465,7 @@ namespace eval logLib {
 #|        -allways rewrites (overwrites) a file that is reoppened ;
   proc logAppendOff {} {
     variable logAppend
+    logMsg "logLib::logAppendOff: logAppend set to: 0" 3
     set logAppend 0
     }
 
@@ -420,13 +473,23 @@ namespace eval logLib {
 #|        -adds variable names to the l_variables list ;
   proc add_variables {new_variables} {
     variable l_variables
+    logMsg "logLib::add_variables: new variables appended to l_variables" 2
+    logMsg "logLib::add_variables:   list of new variables: $new_variables" 3
+    logMsg "logLib::add_variables:   original list of variables: $l_variables" 3
     set l_variables [list {*}$l_variables {*}$new_variables]
+#    global var
+#    foreach var ${new_variables} {
+#      logMsg "logLib::add_variables:   state variable $var initialized" 4
+#      namespace eval ::logLib::state {variable $var ""}
+#      variable $var ""
+#      }
     }
 
 #|      -proc list_variables {} :
 #|        -returns a list of variable names stored in l_variables ;
   proc list_variables {} {
     variable l_variables
+    logMsg "logLib::list_variables: returned l_variables: $l_variables" 4
     return $l_variables
     }
 
@@ -434,6 +497,9 @@ namespace eval logLib {
 #|        -adds command names to the l_commands list ;
   proc add_commands {new_commands} {
     variable l_commands
+    logMsg "logLib::add_commands: new commands appended to l_commands" 2
+    logMsg "logLib::add_commands:   list of new commands: $new_commands" 3
+    logMsg "logLib::add_commands:   original list of commands: $l_commands" 3
     set l_commands [list {*}$l_commands {*}$new_commands]
     }
 
@@ -441,6 +507,7 @@ namespace eval logLib {
 #|        -returns a list of the commands that can be exported ;
   proc list_commands {} {
     variable l_commands
+    logMsg "logLib::list_commands: returned l_commands: $l_commands" 4
     return $l_commands
     }
 
@@ -450,10 +517,13 @@ namespace eval logLib {
 #|        -sets the state::saved variable to 1 ;
   proc state_save {} {
     variable l_variables
+    logMsg "logLib::state_save: namespace variables values saved" 3
     foreach var ${l_variables} {
       variable $var
-      set state::$var [set var]
+      logMsg "logLib::state_save:   state::$var set to: [set $var]" 4
+      set state::$var [set $var]
       }
+    logMsg "logLib::state_save: state::saved set to: 1" 3
     set state::saved 1
     }
 
@@ -463,10 +533,12 @@ namespace eval logLib {
 #|        -if the value of ::logLib::state::saved is 0 does nothing ;
   proc state_restore {} {
     variable l_variables
+    logMsg "logLib::state_restore: namespace variables values restored" 3
     if {$state::saved} {
       foreach var ${l_variables} {
         variable $var
-        set $var $state::[set var]
+      logMsg "logLib::state_restore:   $var set to: [set state::$var]" 4
+        set $var [set state::$var]
         }
       }
     }
@@ -478,13 +550,16 @@ namespace eval logLib {
 #|          -lvl :-output log level for logMsg output ;;;
   proc state_show {{lvl 1}} {
     variable l_variables
+    logMsg "logLib::state_show: printing the namespace variables's values" 3
+    logMsg "logLib::state_show:   to output level: $lvl" 3
     if {$state::saved} {
       foreach var ${l_variables} {
         variable $var
+        logMsg "logLib::state_show:   sent to log: $var [set $var]" 4
         logMsg "$var [set $var]" $lvl
         }
     } else {
-      logMsg "state::saved 0" $lvl
+      logMsg "logLib::state_show: state::saved 0" 3
       }
     }
 
@@ -519,6 +594,7 @@ namespace eval logLib {
 #|          -the first acceptable arg value corresponds to the command
 #|           _ to be called ;;
   proc arg_interpreter {args} {
+    logMsg "logLib::arg_interpreter: interpreting list of arguments: $args" 3
     set remaining_arg_val {}
     if {[expr {[llength $args]%2}] == 0} {
       if {[llength $args] > 0} {
@@ -549,7 +625,7 @@ namespace eval logLib {
           }
         }
     } else {
-      logMsg "logLib::arg_interpreter: Odd number of optional arguments! args: $args"
+      logMsg "logLib::arg_interpreter: Odd number of optional arguments! args: $args" 2
       return ""
       }
     return ${remaining_arg_val}
