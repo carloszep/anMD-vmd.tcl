@@ -9,11 +9,10 @@
 #|  -public software repositories :
 #|    -https://github.com/carloszep/anMD-vmd.tcl ;
 #|  -version information :
-#|    -version :-0.0.6 ;
+#|    -version :-0.0.7 ;
 #|    -changes in progress :
-#|      -command arg_interpreter added .
-#|      -a message is printed when the logLig.tcl file is sourced .
-#|      -incorporated log messages to all commands ;
+#|      -removing state namespace .
+#|      -incorporating regVar namespace to replace state namespace ;
 #|    -to do list :
 #|      -to implement a graphical interface .
 #|      -to implement an internal namespace test command .
@@ -27,9 +26,16 @@
 #|      - ;;
 #|  -notes :
 #|    -originally started within the anMD lib ;
+#|  -sourced files :
+#|    -regVar.tcl ;
+source regVar.tcl
 
 #|  -namespace logLib :
 namespace eval logLib {
+
+#|    -import :
+#|      -regVar::* ;
+  namespace import ::regVar::*
 
 #|    -export :
 #|      -get_logName .
@@ -41,10 +47,10 @@ namespace eval logLib {
 #|      -set_logPath .
 #|      -get_logFileName .
 #|      -set_logFileName .
-#|      -get_logPrefixStr .
-#|      -set_logPrefixStr .
-#|      -get_logSufixStr .
-#|      -set_logSufixStr .
+#|      -get_logPrefix .
+#|      -set_logPrefix .
+#|      -get_logSufix .
+#|      -set_logSufix .
 #|      -get_logOutputStream .
 #|      -set_logOutputStream .
 #|      -get_logLevel .
@@ -69,8 +75,8 @@ namespace eval logLib {
   namespace export get_logName set_logName get_logVersion set_logVersion
   namespace export get_logName_version
   namespace export get_logPath set_logPath get_logFileName set_logFileName
-  namespace export get_logPrefixStr set_logPrefixStr
-  namespace export get_logSufixStr set_logSufixStr
+  namespace export get_logPrefix set_logPrefix
+  namespace export get_logSufix set_logSufix
   namespace export get_logOutputStream set_logOutputStream
   namespace export get_logLevel set_logLevel logMsg logToken logFlush
   namespace export get_logScreen logScreenOn logScreenOff
@@ -91,22 +97,22 @@ namespace eval logLib {
 #|        -version string of the proc, library, namespace, etc., using the logLib .
 #|        -to be included in the default logFileName and in log msgs .
 #|        -default value :
-#|          -"0.0.6" ;;
-  variable logVersionTxt "0.0.6"
+#|          -"0.0.7" ;;
+  variable logVersionTxt "0.0.7"
 #|      -logPath :
 #|        -default value :-"" ;;
   variable logPath ""
 #|      -logFileName :
 #|        -default value :-"" ;;
   variable logFileName ""
-#|      -logPrefixStr :
+#|      -logPrefix :
 #|        -text to be preppended to log messages .
 #|        -default value :-"" ;;
-  variable logPrefixStr ""
-#|      -logSufixStr :
+  variable logPrefix ""
+#|      -logSufix :
 #|        -text to be appended at the en of each log message .
 #|        -default value :-"" ;;
-  variable logSufixStr ""
+  variable logSufix ""
 #|      -loSt :
 #|        -stream for log output messages .
 #|        -default value :-stdout ;;
@@ -125,16 +131,16 @@ namespace eval logLib {
 #|        -are used as "state" variables to be used in
 #|         _ ::logLib::state_save and ::logLib::state_restore commands ;
   variable l_variables [list logNameTxt logVersionTxt logPath logFileName \
-                             logPrefixStr logSufixStr loSt logLvl logScreen \
-                             logAppend l_variables l_commands]
+                             logPrefix logSufix loSt logLvl logScreen \
+                             logAppend l_commands]
 #|      -l_commands :
 #|        -list of the proc names to be exported by the namespace ;;
   variable l_commands [list get_logName         set_logName \
                             get_logVersion      set_logVersion \
                             get_logName_version \
                             get_logFileName     set_logFileName \
-                            get_logPrefixStr    set_logPrefixStr \
-                            get_logSufixStr     set_logSufixStr \
+                            get_logPrefix       set_logPrefix \
+                            get_logSufix        set_logSufix \
                             get_logOutputStream set_logOutputStream \
                             get_logLevel        set_logLevel \
                             get_logScreen logScreenOn   logScreenOff \
@@ -144,41 +150,6 @@ namespace eval logLib {
                             add_commands        list_commands \
                             state_save    state_restore state_show \
                             arg_interpreter]
-
-#|    -nested namespaces :
-#|      -state :
-#|        -contains a copy of all (::logLib::) namespace variables .
-#|        -intended to save the state of the namespace .
-#|        -uses the state_save and state_restore commands .
-#|        -saved variable :
-#|          -it is initialized with the value of 0 .
-#|          -its value changes to 1 after running ::logLib::state_save ;;;
-  namespace eval state {
-#|      -variables (state) :
-#|        -include the same variables as the parent namespace ;
-    variable saved 0
-    variable logNameTxt ""
-    variable logVersionTxt ""
-    variable logPath ""
-    variable logFileName ""
-    variable logPrefixStr ""
-    variable logSufixStr ""
-    variable loSt ""
-    variable logLvl ""
-    variable logScreen ""
-    variable logAppend ""
-    variable l_commands ""
-
-#|        -commands (state) :- ;
-    proc add_variable {var} {
-      variable $var $val
-      }
-
-    proc test_var {var} {
-      variable $var
-      puts "variable $var: [set $var]"
-      }
-    }
 
 #|    -commands :
 #|      -proc get_logName {} :
@@ -304,36 +275,36 @@ namespace eval logLib {
     state_restore    ;# restoring namespace variables
     }
 
-#|      -proc get_logPrefixStr {} :
+#|      -proc get_logPrefix {} :
 #|        -returns the log prefix string ;
-  proc get_logPrefixStr {} {
-    variable logPrefixStr
-    logMsg "logLib::get_logPrefixStr: returned logPrefixStr: $logPrefixStr" 4
-    return $logPrefixStr
+  proc get_logPrefix {} {
+    variable logPrefix
+    logMsg "logLib::get_logPrefix: returned logPrefix: $logPrefix" 4
+    return $logPrefix
     }
 
-#|      -proc set_logPrefixStr {prefix} :
+#|      -proc set_logPrefix {prefix} :
 #|        -sets the log prefix string ;
-  proc set_logPrefixStr {prefix} {
-    variable logPrefixStr
-    logMsg "logLib::set_logPrefixStr: logPrefixStr set to: $prefix" 3
-    set logPrefixStr $prefix
+  proc set_logPrefix {prefix} {
+    variable logPrefix
+    logMsg "logLib::set_logPrefix: logPrefix set to: $prefix" 3
+    set logPrefix $prefix
     }
 
-#|      -proc get_logSufixStr {} :
+#|      -proc get_logSufix {} :
 #|        -returns the log sufix string ;
-  proc get_logSufixStr {} {
-    variable logSufixStr
-    logMsg "logLib::get_logSufixStr: returned logSufixStr: $logSufixStr" 4
-    return $logSufixStr
+  proc get_logSufix {} {
+    variable logSufix
+    logMsg "logLib::get_logSufix: returned logSufix: $logSufix" 4
+    return $logSufix
     }
 
-#|      -proc set_logSufixStr {sufix} :
+#|      -proc set_logSufix {sufix} :
 #|        -sets the log sufix string ;
-  proc set_logSufixStr {sufix} {
-    variable logSufixStr
-    logMsg "logLib::set_logSufixStr: logSufixStr set to: $sufix" 3
-    set logSufixStr $sufix
+  proc set_logSufix {sufix} {
+    variable logSufix
+    logMsg "logLib::set_logSufix: logSufix set to: $sufix" 3
+    set logSufix $sufix
     }
 
 
@@ -380,10 +351,10 @@ namespace eval logLib {
 #|        -prints a message string line to the corrent output stream .
 #|        -if the specified level is higher than the current log level,
 #|         _ no message is output .
-#|        -logPrefixStr and logSufixStr are preppended and appended, resp. ;
+#|        -logPrefix and logSufix are preppended and appended, resp. ;
   proc logMsg {msg {level 1}} {
-    variable logPrefixStr
-    variable logSufixStr
+    variable logPrefix
+    variable logSufix
     variable loSt
     variable logLvl
     variable logScreen
@@ -391,10 +362,10 @@ namespace eval logLib {
 #      logMsg "logLib::logMsg: message sent to output stream: $loSt" 3
 #      logMsg "logLib::logMsg:   at log Level: $level" 4
 #      logMsg "logLib::logMsg:   message: $level" 4
-      puts $loSt "${logPrefixStr}${msg}${logSufixStr}"
+      puts $loSt "${logPrefix}${msg}${logSufix}"
       if {($loSt != "stdout") && $logScreen} {
 #        logMsg "logLib::logMsg:   message sent also to stdout" 3
-        puts stdout "${logPrefixStr}${msg}${logSufixStr}"
+        puts stdout "${logPrefix}${msg}${logSufix}"
         }
     } else {
 #      logMsg "logLib::logMsg: log message not output due to log level" 3
@@ -489,12 +460,12 @@ namespace eval logLib {
     logMsg "logLib::add_variables:   list of new variables: $new_variables" 3
     logMsg "logLib::add_variables:   original list of variables: $l_variables" 3
     set l_variables [list {*}$l_variables {*}$new_variables]
-#    global var
-#    foreach var ${new_variables} {
-#      logMsg "logLib::add_variables:   state variable $var initialized" 4
-#      namespace eval ::logLib::state {variable $var ""}
+    global var
+    foreach var ${new_variables} {
+      logMsg "logLib::add_variables:   state variable $var initialized" 4
+      namespace eval ::logLib {variable $var ""}
 #      variable $var ""
-#      }
+      }
     }
 
 #|      -proc list_variables {} :
@@ -524,19 +495,16 @@ namespace eval logLib {
     }
 
 #|      -proc state_save {} :
-#|        -copy the values of all (::logLig::) namespace variables
-#|         _ to the nested namespace 'state' .
-#|        -sets the state::saved variable to 1 ;
+#|        -registers (stores) the names and values of the namespace variables
+#|         _ in l_variables in the regVar namespace ;
   proc state_save {} {
     variable l_variables
-    logMsg "logLib::state_save: namespace variables values saved" 3
+    logMsg "logLib::state_save: vars and values stored into regVar" 3
     foreach var ${l_variables} {
       variable $var
-      logMsg "logLib::state_save:   state::$var set to: [set $var]" 4
-      set state::$var [set $var]
+      logMsg "logLib::state_save:   variable: $var value: [set $var]" 4
+      regVar::varSave $var
       }
-    logMsg "logLib::state_save: state::saved set to: 1" 3
-    set state::saved 1
     }
 
 #|      -proc state_restore {} :
@@ -545,33 +513,29 @@ namespace eval logLib {
 #|        -if the value of ::logLib::state::saved is 0 does nothing ;
   proc state_restore {} {
     variable l_variables
-    logMsg "logLib::state_restore: namespace variables values restored" 3
-    if {$state::saved} {
-      foreach var ${l_variables} {
-        variable $var
-      logMsg "logLib::state_restore:   $var set to: [set state::$var]" 4
-        set $var [set state::$var]
+    logMsg "logLib::state_restore: vars and values restored from regVar" 3
+    foreach var $l_variables {
+      variable $var
+      if {[regVar::varRestore $var]} {
+        logMsg "logLib::state_restore:   $var value restored: [set $var]" 4
+      } else {
+        logMsg "logLib::state_restore:   $var value not restored" 3
         }
       }
     }
 
 #|      -proc state_show {{lvl 1}} :
-#|        -prints to log variable names and values specified in l_variables .
-#|        -if state::saved is 0 does nothing .
+#|        -prints to variable names and values specified in l_variables .
 #|        -arguments :
 #|          -lvl :-output log level for logMsg output ;;;
   proc state_show {{lvl 1}} {
     variable l_variables
     logMsg "logLib::state_show: printing the namespace variables's values" 3
     logMsg "logLib::state_show:   to output level: $lvl" 3
-    if {$state::saved} {
-      foreach var ${l_variables} {
-        variable $var
-        logMsg "logLib::state_show:   sent to log: $var [set $var]" 4
-        logMsg "$var [set $var]" $lvl
-        }
-    } else {
-      logMsg "logLib::state_show: state::saved 0" 3
+    foreach var ${l_variables} {
+      variable $var
+      logMsg "logLib::state_show:   sent to log: $var [set $var]" 5
+      logMsg "  $var [set $var]" $lvl
       }
     }
 
@@ -590,10 +554,10 @@ namespace eval logLib {
 #|              -'set_logVersion', 'setLogVersion', 'logVersion' .
 #|              -'set_logFileName', 'set_logFile', 'setLogFile',
 #|               _ 'setLogFileName', 'logFile', 'logFileName' .
-#|              -'set_logPrefixStr', 'set_logPrefix', 'setLogPrefix',
-#|               _ 'logPrefix', 'logPrefixStr' .
-#|              -'set_logSufixStr', 'set_logSufix', 'setLogSufix',
-#|               _ 'logSufix', 'logSufixStr' .
+#|              -'set_logPrefix', 'set_logPrefix', 'setLogPrefix',
+#|               _ 'logPrefix', 'logPrefix' .
+#|              -'set_logSufix', 'set_logSufix', 'setLogSufix',
+#|               _ 'logSufix', 'logSufix' .
 #|              -'set_logOutputStream', 'set_logOutput', 'setlogOutput',
 #|               _ 'logOutput', 'logStream', 'setLogOutputStream' .
 #|              -'set_logLevel', 'setLogLevel', 'logLevel', 'logLvl' ;;;
@@ -620,11 +584,11 @@ namespace eval logLib {
               - "setlogfilename" - "logfile" - "logfilename" {
               set_logFileName $val}
             "set_logprefixstr" - "set_logprefix" - "setlogprefix" \
-              - "logprefix" - "logPrefixStr" {
-              set_logPrefixStr $val}
+              - "logprefix" - "logPrefix" {
+              set_logPrefix $val}
             "set_logsufixstr" - "set_logsufix" - "setlogsufix" \
               - "logsufix" - "logsufixstr" {
-              set_logSufixStr $val}
+              set_logSufix $val}
             "set_logoutputstream" - "set_logoutput" - "setlogoutput" \
               - "logoutput" - "logstream" - "setlogoutputstream" - "loSt" {
               [eval set_logOutputStream $val]}

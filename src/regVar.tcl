@@ -51,6 +51,9 @@ namespace eval regVar {
     variable $varName
     if {[lsearch $l_variables $varName] >= 0} {
       set var [set $varName]
+      return 1
+    } else {
+      return 0
       }
     }
 
