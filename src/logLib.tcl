@@ -91,8 +91,8 @@ namespace eval logLib {
 #|        -version string of the proc, library, namespace, etc., using the logLib .
 #|        -to be included in the default logFileName and in log msgs .
 #|        -default value :
-#|          -"0.0.5" ;;
-  variable logVersionTxt "0.0.5"
+#|          -"0.0.6" ;;
+  variable logVersionTxt "0.0.6"
 #|      -logPath :
 #|        -default value :-"" ;;
   variable logPath ""
