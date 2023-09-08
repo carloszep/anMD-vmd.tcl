@@ -154,6 +154,8 @@ namespace eval logLib {
 #|          -it is initialized with the value of 0 .
 #|          -its value changes to 1 after running ::logLib::state_save ;;;
   namespace eval state {
+#|      -variables (state) :
+#|        -include the same variables as the parent namespace ;
     variable saved 0
     variable logNameTxt ""
     variable logVersionTxt ""
@@ -166,6 +168,16 @@ namespace eval logLib {
     variable logScreen ""
     variable logAppend ""
     variable l_commands ""
+
+#|        -commands (state) :- ;
+    proc add_variable {var} {
+      variable $var $val
+      }
+
+    proc test_var {var} {
+      variable $var
+      puts "variable $var: [set $var]"
+      }
     }
 
 #|    -commands :
