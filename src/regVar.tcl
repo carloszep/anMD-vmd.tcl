@@ -28,6 +28,7 @@ namespace eval regVar {
 #|      -varRemove .
 #|      -regVar_clear ;
   namespace export varSave varRestore list_regVariables
+  namespace export varRemove regVar_clear
 #|    -variables :
 #|      -l_regVariables :
 #|        -list of all registered variables ;;
