@@ -5,17 +5,17 @@
 #|    -created :
 #|      -2023-09-07.Thu ;
 #|    -modified :
-#|      -2023-09-07.Thu ;;
+#|      -2023-09-25.Mon ;;
 #|  -atuhors and contributors :
 #|    -Carlos Z. Gómez Castro ;
 #|  -public software repositories :
 #|    -https://github.com/carloszep/anMD-vmd.tcl ;
 #|  -version information :
-#|    -version :-0.0.1 ;
+#|    -version :-0.0.2 ;
 #|    -changes in progress :
-#|      -initial declarations ;
+#|      -procs varRemove and regVar_clear added ;
 #|    -to do list :
-#|      -to complete definitio of variable and commands .
+#|      -to complete definition of variables and commands .
 #|      -perform tests ;
 #|  -notes :
 #|    - ;;
@@ -24,7 +24,9 @@ namespace eval regVar {
 #|    -export :
 #|      -varSave .
 #|      -varRestore .
-#|      -list_regVariables ;
+#|      -list_regVariables .
+#|      -varRemove .
+#|      -regVar_clear ;
   namespace export varSave varRestore list_regVariables
 #|    -variables :
 #|      -l_regVariables :
@@ -63,6 +65,26 @@ namespace eval regVar {
     variable l_regVariables
     return $l_regVariables
     }
+
+#|      -proc varRemove {varNames} :
+#|        -removes one or more elements in l_regVariables list .
+#|        -the elements to delete are specified by ;
+  proc varRemove {varNames} {
+    variable l_regVariables
+    foreach varName $varNames {
+      set ind [lsearch $l_regVariables $varName]
+      set l_regVariables [lreplace $l_regVariables $ind $ind]
+      variable $varName
+      unset $varName
+      }
+    }
+
+#|      -proc regVar_clear {} :
+#|        -removes all variables stored in the namespace ;
+  proc regVar_clear {} {
+    varRemove [list_regVariables]
+    }
+
 #|      - ;;
 #|  - ;
   }   ;#   namespace eval state
