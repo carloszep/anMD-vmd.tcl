@@ -1,9 +1,11 @@
 #|-logLib.tcl :|
-#|  -tcl library for vmd declaring the logLib namespace, used by other
-#|   _ libraries to manage generic log files .
+#|  -tcl library declaring the logLib namespace, used by other
+#|   _ libraries to manage generic output log files .
 #|  -dates :
-#|    -created :-2023-04-28.Fri ;
-#|    -modified :-2023-09-07.Thu ;;
+#|    -created :
+#|      -2023-04-28.Fri ;
+#|    -modified :
+#|      -2023-09-25.Mon ;;
 #|  -authors and contributors :
 #|    -Carlos Z. Gómez Castro ;
 #|  -public software repositories :
@@ -11,8 +13,7 @@
 #|  -version information :
 #|    -version :-0.0.7 ;
 #|    -changes in progress :
-#|      -removing state namespace .
-#|      -incorporating regVar namespace to replace state namespace ;
+#|      -regVar namespace incorporated ;
 #|    -to do list :
 #|      -to implement a graphical interface .
 #|      -to implement an internal namespace test command .
@@ -80,8 +81,7 @@ namespace eval logLib {
   namespace export get_logLevel set_logLevel logMsg logToken logFlush
   namespace export get_logScreen logScreenOn logScreenOff
   namespace export get_logAppend logAppendOn logAppendOff
-  namespace export list_variables
-  namespace export add_commands list_commands
+  namespace export list_variables add_commands list_commands
   namespace export state_save state_restore state_show
   namespace export arg_interpreter
 
@@ -92,39 +92,49 @@ namespace eval logLib {
 #|        -default value :
 #|          -"logLib" ;;
   variable logNameTxt "logLib"
+
 #|      -logVersionTxt :
 #|        -version string of the proc, library, namespace, etc., using the logLib .
 #|        -to be included in the default logFileName and in log msgs .
 #|        -default value :
 #|          -"0.0.7" ;;
   variable logVersionTxt "0.0.7"
+
 #|      -logPath :
 #|        -default value :-"" ;;
   variable logPath ""
+
 #|      -logFileName :
 #|        -default value :-"" ;;
   variable logFileName ""
+
 #|      -logPrefix :
 #|        -text to be preppended to log messages .
 #|        -default value :-"" ;;
   variable logPrefix ""
+
 #|      -logSufix :
 #|        -text to be appended at the en of each log message .
 #|        -default value :-"" ;;
   variable logSufix ""
+
 #|      -loSt :
 #|        -stream for log output messages .
 #|        -default value :-stdout ;;
   variable loSt stdout
+
 #|      -logLvl :
 #|        -default :-1 ;;
   variable logLvl 1
+
 #|      -logScreen :
 #|        -default value :-1 ;;
   variable logScreen 1
+
 #|      -logAppend :
 #|        -default value :-1 ;;
   variable logAppend 1
+
 #|      -l_variables :
 #|        -contains the names of all namespace variables in a list .
 #|        -are used as "state" variables to be used in
@@ -132,6 +142,7 @@ namespace eval logLib {
   variable l_variables [list logNameTxt logVersionTxt logPath logFileName \
                              logPrefix logSufix loSt logLvl logScreen \
                              logAppend l_commands]
+
 #|      -l_commands :
 #|        -list of the proc names to be exported by the namespace ;;
   variable l_commands [list get_logName         set_logName \
@@ -455,21 +466,8 @@ namespace eval logLib {
 #|        -adds variable names to the l_variables list ;
   proc add_variables {new_variables} {
     variable l_variables
-    logMsg "logLib::add_variables: new variables appended to l_variables" 2
-    logMsg "logLib::add_variables:   list of new variables: $new_variables" 3
-    logMsg "logLib::add_variables:   original list of variables: $l_variables" 3
+    logMsg "logLib::add_variables: variables appended to l_variables: $new_variables" 3
     set l_variables [list {*}$l_variables {*}$new_variables]
-    foreach var $new_variables {
-      variable $var
-      logMsg "logLib::add_variables:   added var: $var value: [set $var]" 1
-      varSave $var
-      }
-#    global var
-#    foreach var ${new_variables} {
-#      logMsg "logLib::add_variables:   state variable $var initialized" 4
-#      namespace eval ::logLib {variable $var ""}
-#      variable $var ""
-#      }
     }
 
 #|      -proc list_variables {} :
@@ -484,9 +482,7 @@ namespace eval logLib {
 #|        -adds command names to the l_commands list ;
   proc add_commands {new_commands} {
     variable l_commands
-    logMsg "logLib::add_commands: new commands appended to l_commands" 2
-    logMsg "logLib::add_commands:   list of new commands: $new_commands" 3
-    logMsg "logLib::add_commands:   original list of commands: $l_commands" 3
+    logMsg "logLib::add_commands: commands appended to l_commands: $new_commands" 3
     set l_commands [list {*}$l_commands {*}$new_commands]
     }
 
