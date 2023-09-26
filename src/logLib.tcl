@@ -65,6 +65,7 @@ namespace eval logLib {
 #|      -get_logAppend .
 #|      -logAppendOn .
 #|      -logAppendOff .
+#|      -add_variables .
 #|      -list_variables .
 #|      -add_commands .
 #|      -list_commands .
@@ -81,7 +82,8 @@ namespace eval logLib {
   namespace export get_logLevel set_logLevel logMsg logToken logFlush
   namespace export get_logScreen logScreenOn logScreenOff
   namespace export get_logAppend logAppendOn logAppendOff
-  namespace export list_variables add_commands list_commands
+  namespace export add_variables list_variables
+  namespace export add_commands list_commands
   namespace export state_save state_restore state_show
   namespace export arg_interpreter
 
@@ -468,6 +470,10 @@ namespace eval logLib {
     variable l_variables
     logMsg "logLib::add_variables: variables appended to l_variables: $new_variables" 3
     set l_variables [list {*}$l_variables {*}$new_variables]
+    foreach varName $new_variables {
+      upvar $varName var
+      variable $varName $var
+      }
     }
 
 #|      -proc list_variables {} :
@@ -503,7 +509,7 @@ namespace eval logLib {
     foreach var ${l_variables} {
       variable $var
       logMsg "logLib::state_save:   variable: $var value: [set $var]" 4
-      regVar::varSave $var
+      varSave $var
       }
     }
 
