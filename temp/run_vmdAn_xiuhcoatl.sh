@@ -106,7 +106,7 @@ cd \$scratchDir
 
 /home/czgomez/software/vmd/inst/bin/vmd -e \$scriptCalc > job-log_\$name.txt
 
-cp -r \$scratchDir/*.txt \$scratchDir/*.dat \$scratchDir/*.log \$scratchDir/*.csv \$scratchDir/*.tsv \$scratchDir/*.agr \$workDir/\$outDir
+cp -r \$scratchDir/*.txt \$scratchDir/*.dat \$scratchDir/*.log \$scratchDir/*.csv \$scratchDir/*.tsv \$scratchDir/*.agr \$scratchDir/*.dcd \$scratchDir/*.coor \$scratchDir/*.pdb \$workDir/\$outDir
 rm -r \$scratchDir/*
 #cp -r \$scratchDir/* \$workDir/\$outDir
 
