@@ -590,7 +590,7 @@ namespace eval logLib {
               - "setlogfilename" - "logfile" - "logfilename" {
               set_logFileName $val}
             "set_logprefixstr" - "set_logprefix" - "setlogprefix" \
-              - "logprefix" - "logPrefix" {
+              - "logprefix" {
               set_logPrefix $val}
             "set_logsufixstr" - "set_logsufix" - "setlogsufix" \
               - "logsufix" - "logsufixstr" {
