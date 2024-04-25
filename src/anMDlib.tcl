@@ -63,37 +63,48 @@ namespace eval anMDlib {
     set useShellCom 0
     }
 
+  proc init {} {
+    variable useGraphics
+    variable useShellCom
+#|  -initialization of the anMD namespace :
+#|    -intended to show the usage of the library and setup default values .
+#|    -set the name and version of the library using the logLib namespace .
+  set_logName "anMDlib"
+  set_logVersion "0.0.1"
+#|    -set the library path prepended to the log file .
+  set_logPath ""
+#|    -set the name of the file to output log messages .
+#|    -settting logFileName to 'stdout' outputs log only to screen .
+  set_logFileName "stdout"
+#|    -set the logLevel controling the "amount" of log output .
+  set_logLevel 2
+#|    -activates the output to the screen additional to file log output .
+  logScreenOn
+#|    -incorporates the anMDlib list of variables *
+  add_variables [list   useGraphics   useShellCom]
+#|    -incorporates the anMDlib list of commands to the logLib list .
+  add_commands [list graphicsOn graphicsOff shellComOn shellComOff]
+#|    -reports to log the initial configuration .
+  logMsg "initialized [get_logName_version]" 1
+  logMsg "Structural analysis of MD trajectories for VMD." 1
+  logMsg "log path: [get_logPath]" 2
+  logMsg "log output to: [get_logOutputStream]" 1
+  logMsg "output level: [get_logLevel]" 1
+  logMsg "output file for log: [get_logFileName]" 2
+  logMsg "print to screen: [get_logScreen]" 2
+  logMsg "list of commands: [list_commands]" 2
+  logMsg "list of variables: [list_variables]" 2
+#|    -flush the output buffer .
+  logFlush
+    }   ;#   proc init
+
 #|      - ;;
 
   }   ;#  namespace eval anMD
 
-#|  -initialization of the anMD namespace :
-#|    -intended to show the usage of the library and setup default values .
-#|    -set the name and version of the library using the logLib namespace .
-::anMDlib::set_logName_version anMDlib 0.0.1
-#|    -set the library path prepended to the log file .
-::anMDlib::set_logPath ""
-#|    -set the name of the file to output log messages .
-#|    -settting logFileName to 'stdout' outputs log only to screen .
-::anMDlib::set_logFileName "stdout"
-#|    -set the logLevel controling the "amount" of log output .
-::anMDlib::set_logLevel 1
-#|    -activates the output to the screen additional to file log output .
-::anMDlib::logScreenOn
-#|    -incorportates the anMDlib list of commands to the logLib list .
-::anMDlib::add_commands [list graphicsOn graphicsOff shellComOn shellComOff]
-#|    -reports to log the initial configuration .
-::anMDlib::logMsg "initialized [::anMDlib::get_logName_version]" 1
-::anMDlib::logMsg "Structural analysis of MD trajectories for VMD." 1
-::anMDlib::logMsg "log path: [::anMDlib::get_logPath]" 2
-::anMDlib::logMsg "log output to: [::anMDlib::get_logOutputStream]" 1
-::anMDlib::logMsg "output level: [::anMDlib::get_logLevel]" 1
-::anMDlib::logMsg "output file for log: [::anMDlib::get_logFileName]" 2
-::anMDlib::logMsg "print to screen: [::anMDlib::get_logScreen]" 2
-::anMDlib::logMsg "list of commands: [::anMDlib::list_commands]" 2
-#|    -flush the output buffer .
-::anMDlib::logFlush
 #|    - ;
+
+::anMDlib::init
 
 #|  - ;
 
