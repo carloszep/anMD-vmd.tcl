@@ -15,6 +15,8 @@
 #|    -changes in progress :
 #|      -procs varRemove and regVar_clear added ;
 #|    -to do list :
+#|      -implement code to manage repeated variables .
+#|      -implement procedures to write/read variables from files .
 #|      -to complete definition of variables and commands .
 #|      -perform tests ;
 #|  -notes :

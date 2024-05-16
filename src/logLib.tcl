@@ -583,24 +583,33 @@ namespace eval logLib {
         foreach {arg val} $args {
           switch [string tolower $arg] {
             "set_logname" - "setlogname" - "logname" {
-              set_logName $val}
+              logMsg "setting $arg to $val" 3
+              set_logName $val
+              }
             "set_logversion" - "setlogversion" - "logversion" {
+              logMsg "setting $arg to $val" 3
               set_logVersion $val}
             "set_logfilename" - "set_logfile" - "setlogfile" \
               - "setlogfilename" - "logfile" - "logfilename" {
+              logMsg "setting $arg to $val" 3
               set_logFileName $val}
             "set_logprefixstr" - "set_logprefix" - "setlogprefix" \
               - "logprefix" {
+              logMsg "setting $arg to $val" 3
               set_logPrefix $val}
             "set_logsufixstr" - "set_logsufix" - "setlogsufix" \
               - "logsufix" - "logsufixstr" {
+              logMsg "setting $arg to $val" 3
               set_logSufix $val}
             "set_logoutputstream" - "set_logoutput" - "setlogoutput" \
               - "logoutput" - "logstream" - "setlogoutputstream" - "loSt" {
+              logMsg "setting $arg to $val" 3
               [eval set_logOutputStream $val]}
             "set_loglevel" - "setloglevel" - "loglevel" - "loglvl" {
+              logMsg "setting $arg to $val" 3
               set_logLevel $val}
             default {
+              logMsg "argument $arg not processed; added to remaining arg list" 3
               set remaining_arg_val [list {*}${remaining_arg_val} $arg $val]
               }
             }
