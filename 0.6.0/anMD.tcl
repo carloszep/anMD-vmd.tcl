@@ -62,9 +62,11 @@
 #|      -alignTraj :-align each frame of a structure in a trajectory ;
 #|      -rmsdTrajDat :-calculates the RMSD for a trajectory in a selection ;
 #|      -rmsdTraj :-RMSD for a set of selections ;
+#|      -rmsfTrajDat :- ;
+#|      -rmsfTraj :- ;
 #|      -distTrajDat :-calculates distances along a traj ;
 #|      -angleTrajDat :-calculates geometric angles along a trajectory ;
-#1      -dihedTrajDat :-calculate dihedral angles along a trajectory ;
+#|      -dihedTrajDat :-calculate dihedral angles along a trajectory ;
 #|      -geomTraj :-plots structural geometric measurements for selIds ;
 #|      -attribTrajDat :-monitors properties of a selection over the time ;
 #|      -attribTraj :-monitor a property for a set of selections ;
@@ -577,6 +579,11 @@ proc rmsdTraj {selIds args} {
   puts $loSt "$procName: Done."
   }   ;# rmsdTraj
 
+proc rmsfTrajDat {} {
+  }   ;# rmsfTrajDat
+
+proc rmsfTraj {} {
+  }   ;# rmsfTrajDat
 
 #|-proc distTrajDat {selId1 selId2 {weight "mass"} {lbl "selId"} {seqTime 1}
 #|                                              _ {fixSel2 0} {loSt stdout}} :

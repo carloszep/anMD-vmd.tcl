@@ -30,21 +30,88 @@
 #|  -notes :
 #|    -for the moment it is implemented within the anMD tcl library ;
 
+#|-source files :- ;
+source logLib.tcl
+
 #|  -namespace argInterp :
 namespace eval argInterp {
-#|    -import :- ;
+
+#|    -import :-::logLib::* ;
+  namespace import ::logLib::*
+
 #|    -export :
 #|      -test_argInterp .
 #|      - ;
 #|    -namespace variables :
-#|      -interp_vars .
+#|      -interp_args .
 #|      -interp_coms ;
-#|    -namspace commands :- ;;;
-  variable interp_vars {}
-  variable interp_coms {}
+#|    -namspace commands :- ;;
+  variable interp_args {}
 
+  proc argInterp_init {} {
+
+# configure logLib namespace used by argInterp
+    set_logFileName "stdout"
+    set_logLevel 2
+    set_logName "argInterp"
+    set_logVersion "001"
+
+# adding commands and variables from argInterp to logLib namespace
+    add_commands [list argInterp_init]
+    add_variables [list interp_args]
+
+# report initial configuration
+    logMsg "initialized [get_logName_version]" 1
+    logMsg "Generation of NAMD configuration files." 1
+    state_show 2
+
+# flushes the output buffer
+    logFlush
+
+    }
+
+#|  -prog set_arg :
+#|    -defines/modifies arguments and options ;
+#|    -arguments :
+#|      -argName :- ;
+#|    -optional arguments (args) :
+#|      -'alias', 'aliases', 'names' :- ;
+#|      -'default', 'defaultValue', 'defVal' ;;
+  proc set_arg {argName args} {
+    variable interp_args
+
+# check whether the argument already is in the interp_args list
+    set argPos [lsearch $interp_args $argName]
+    if {$argPos == -1} {set interp_args [list {*}$interp_args $argName]}
+
+# check optional arguments
+    if {[expr {[llength $args]%2}] == 0} {   ;# even or 0 optional arguments
+    if {[llength $args] > 0} {
+      foreach {arg val} $args {
+        switch [string tolower $arg] {
+          "alias" - "aliases" - "names" {
+            
+            }
+          "default" - "defaultValue" - "defVal" {
+            }
+          default {}
+          }
+        }
+      }
+    } else {
+      logMsg "Odd number of optional arguments! Returning... args: $args" 1
+      return ""
+      }
+    }   ;# proc set_arg
+
+#|  - ;
   proc test_argInterp {} {
     }
 
 }   ;# namespace eval argInterp
+
+# initializes the argInterp namespace
+::argInterp::argInterp_init
+
+
 
