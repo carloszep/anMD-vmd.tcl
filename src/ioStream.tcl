@@ -17,4 +17,18 @@
 #|      -stdin, text files, remote files ;
 #|    -intended output devises ;
 #|      -stdout, text files, remote files, printer, objects ;;;
+
+#|-source files :
+#|  - ;
+
+#|-class txtOut :
+#|  -variables :
+#|    -fileName ;
+#|  -methods :
+#|    -outStream ;;
+itcl_class txtOut {
+  variable fileName ""
+  variable outStream ""
+  }   ;# class txtOut
+
 #|- ;
