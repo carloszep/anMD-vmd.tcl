@@ -14,7 +14,7 @@
 #|      -decide if the argument can be used more than once .
 #|      -type of argument (flag, var-val pair, procedural arg, ...) ;
 #|    -admit different formats for the arguments :
-#|      -'var val', 'val=val', '-var val', --var{val}, ... ;;
+#|      -'var val', 'var=val', '-var val', --var{val}, ... ;;
 #|  -version information :
 #|    -version :-0.0.1 ;
 #|    -changes in progress in this version :
