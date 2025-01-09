@@ -46,7 +46,7 @@ sbatch << EOF
 #SBATCH --output=res.txt
 #SBATCH --ntasks-per-node=1
 #SBATCH --nodes=1
-#SBATCH --partition=gpu_k80
+#SBATCH --partition=gpu_k40m
 #SBATCH --mail-type=BEGIN,END
 #SBATCH --mail-user=carloszepgc@gmail.com
 #SBATCH --gres=gpu:1
