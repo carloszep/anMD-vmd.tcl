@@ -5,16 +5,18 @@
 #|    -created :
 #|      -2023-04-28.Fri ;
 #|    -modified :
-#|      -2023-09-25.Mon ;;
+#|      -2025-01-16.Thu ;;
 #|  -authors and contributors :
 #|    -Carlos Z. Gómez Castro ;
 #|  -public software repositories :
 #|    -https://github.com/carloszep/anMD-vmd.tcl ;
 #|  -version information :
-#|    -version :-0.0.7 ;
-#|    -changes in progress :
+#|    -version :-0.0.8 ;
+#|    -recent changes :
+#|      -logLib_help proc added .
 #|      -regVar namespace incorporated ;
 #|    -to do list :
+#|      -improve logLib_help .
 #|      -to implement a graphical interface .
 #|      -to implement an internal namespace test command .
 #|      -to add add_state_variables command *? ;;
@@ -620,7 +622,23 @@ namespace eval logLib {
       return ""
       }
     return ${remaining_arg_val}
+    }   ;# proc arg_interpreter
+
+#|      -proc logLib_help {} :
+#|        - ;
+  proc logLib_help {{opt ""}} {
+    puts "[::logLib::get_logName_version]: Library to manage log information messages."
+    puts "  to get list of commands and variables use: logLib::list_commands and logLib::list_variables"
+    puts "  optional args for the logLib::arg_interpreter:"
+    puts "    set_logName"
+    puts "    set_logVersion"
+    puts "    set_logFileName"
+    puts "    set_logPrefixStr"
+    puts "    set_logSufixStr"
+    puts "    set_logOutputStream"
+    puts "    set_logLevel"
     }
+
 #|      - ;;
 
   }   ;# namespace eval logLib
