@@ -74,7 +74,8 @@ namespace eval logLib {
 #|      -state_save .
 #|      -state_restore .
 #|      -state_show .
-#|      -arg_interpreter ;
+#|      -arg_interpreter .
+#|      -logLib_help ;
   namespace export get_logName set_logName get_logVersion set_logVersion
   namespace export get_logName_version
   namespace export get_logPath set_logPath get_logFileName set_logFileName
@@ -88,6 +89,7 @@ namespace eval logLib {
   namespace export add_commands list_commands
   namespace export state_save state_restore state_show
   namespace export arg_interpreter
+  namespace export logLib_help
 
 #|    -variables :
 #|      -logNameTxt :
@@ -102,7 +104,7 @@ namespace eval logLib {
 #|        -to be included in the default logFileName and in log msgs .
 #|        -default value :
 #|          -"0.0.7" ;;
-  variable logVersionTxt "0.0.7"
+  variable logVersionTxt "0.0.8"
 
 #|      -logPath :
 #|        -default value :-"" ;;
@@ -163,7 +165,8 @@ namespace eval logLib {
                             add_variables       list_variables \
                             add_commands        list_commands \
                             state_save    state_restore state_show \
-                            arg_interpreter]
+                            arg_interpreter \
+                            logLib_help]
 
 #|    -commands :
 #|      -proc get_logName {} :
@@ -624,11 +627,11 @@ namespace eval logLib {
     return ${remaining_arg_val}
     }   ;# proc arg_interpreter
 
-#|      -proc logLib_help {} :
-#|        - ;
+#|      -proc logLib_help {{opt ""}} :
+#|        -prints out information about logLib namespace usage ;
   proc logLib_help {{opt ""}} {
     puts "[::logLib::get_logName_version]: Library to manage log information messages."
-    puts "  to get list of commands and variables use: logLib::list_commands and logLib::list_variables"
+    puts "  list of commands and vars, use: logLib::list_commands logLib::list_variables"
     puts "  optional args for the logLib::arg_interpreter:"
     puts "    set_logName"
     puts "    set_logVersion"
@@ -637,7 +640,7 @@ namespace eval logLib {
     puts "    set_logSufixStr"
     puts "    set_logOutputStream"
     puts "    set_logLevel"
-    }
+    }   ;# proc logLib_help
 
 #|      - ;;
 
