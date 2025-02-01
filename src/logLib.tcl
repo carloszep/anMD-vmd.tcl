@@ -5,14 +5,15 @@
 #|    -created :
 #|      -2023-04-28.Fri ;
 #|    -modified :
-#|      -2025-01-16.Thu ;;
+#|      -2025-02-01.Sat ;;
 #|  -authors and contributors :
 #|    -Carlos Z. Gómez Castro ;
 #|  -public software repositories :
 #|    -https://github.com/carloszep/anMD-vmd.tcl ;
 #|  -version information :
-#|    -version :-0.0.8 ;
+#|    -version :-0.0.9 ;
 #|    -recent changes :
+#|      -regVar is sources using loadLib .
 #|      -logLib_help proc added .
 #|      -regVar namespace incorporated ;
 #|    -to do list :
@@ -31,7 +32,8 @@
 #|    -originally started within the anMD lib ;
 #|  -sourced files :
 #|    -regVar.tcl ;
-source regVar.tcl
+set logLib_version 0.0.9
+loadLib regVar
 
 #|  -namespace logLib :
 namespace eval logLib {

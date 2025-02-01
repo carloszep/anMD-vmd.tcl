@@ -5,14 +5,15 @@
 #|    -created :
 #|      -2023-09-07.Thu ;
 #|    -modified :
-#|      -2023-09-25.Mon ;;
+#|      -2025-02-01.Sat ;;
 #|  -atuhors and contributors :
 #|    -Carlos Z. Gómez Castro ;
 #|  -public software repositories :
 #|    -https://github.com/carloszep/anMD-vmd.tcl ;
 #|  -version information :
-#|    -version :-0.0.2 ;
-#|    -changes in progress :
+#|    -version :-0.0.3 ;
+#|    -latest changes :
+#|      -setting variable 'regVar_version' to source using loadLib .
 #|      -procs varRemove and regVar_clear added ;
 #|    -to do list :
 #|      -implement code to manage repeated variables .
@@ -21,6 +22,9 @@
 #|      -perform tests ;
 #|  -notes :
 #|    - ;;
+
+set regVar_version 0.0.2
+
 #|  -namespace regVar :
 namespace eval regVar {
 #|    -export :
