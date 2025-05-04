@@ -23,7 +23,7 @@
 #|  -notes :
 #|    - ;;
 
-set regVar_version 0.0.2
+set regVar_version 0.0.3
 
 #|  -namespace regVar :
 namespace eval regVar {

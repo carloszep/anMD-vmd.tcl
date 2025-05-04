@@ -5,15 +5,16 @@
 #|    -created :
 #|      -2023-04-28.Fri ;
 #|    -modified :
-#|      -2025-02-01.Sat ;;
+#|      -2025-05-03.Sat ;;
 #|  -authors and contributors :
 #|    -Carlos Z. Gómez Castro ;
 #|  -public software repositories :
 #|    -https://github.com/carloszep/anMD-vmd.tcl ;
 #|  -version information :
-#|    -version :-0.0.9 ;
+#|    -version :-0.1.0 ;
 #|    -recent changes :
-#|      -regVar is sources using loadLib .
+#|      -arg_interpreter renamed to logLib_argInterp .
+#|      -regVar is sourced using loadLib .
 #|      -logLib_help proc added .
 #|      -regVar namespace incorporated ;
 #|    -to do list :
@@ -32,7 +33,7 @@
 #|    -originally started within the anMD lib ;
 #|  -sourced files :
 #|    -regVar.tcl ;
-set logLib_version 0.0.9
+set logLib_version 0.1.0
 loadLib regVar
 
 #|  -namespace logLib :
@@ -76,7 +77,7 @@ namespace eval logLib {
 #|      -state_save .
 #|      -state_restore .
 #|      -state_show .
-#|      -arg_interpreter .
+#|      -logLib_argInterp .
 #|      -logLib_help ;
   namespace export get_logName set_logName get_logVersion set_logVersion
   namespace export get_logName_version
@@ -90,7 +91,7 @@ namespace eval logLib {
   namespace export add_variables list_variables
   namespace export add_commands list_commands
   namespace export state_save state_restore state_show
-  namespace export arg_interpreter
+  namespace export logLib_argInterp
   namespace export logLib_help
 
 #|    -variables :
@@ -167,7 +168,7 @@ namespace eval logLib {
                             add_variables       list_variables \
                             add_commands        list_commands \
                             state_save    state_restore state_show \
-                            arg_interpreter \
+                            logLib_argInterp \
                             logLib_help]
 
 #|    -commands :
@@ -255,8 +256,8 @@ namespace eval logLib {
     variable logFileName
     variable logAppend
     variable loSt
-    state_save   ;# saving namespace variables
-    set_logPrefix "logLib::set_logFileName: "
+#    state_save   ;# saving namespace variables
+#    set_logPrefix "logLib::set_logFileName: "
     if {$loSt != "stdout"} {
       logMsg "closing current log output stream..." 2
       close $loSt
@@ -291,7 +292,7 @@ namespace eval logLib {
           }
         }
       }
-    state_restore    ;# restoring namespace variables
+#    state_restore    ;# restoring namespace variables
     }
 
 #|      -proc get_logPrefix {} :
@@ -552,7 +553,7 @@ namespace eval logLib {
       }
     }
 
-#|      -proc logLib::arg_interpreter {args} :
+#|      -proc logLib::logLib_argInterp {args} :
 #|        -interpretates a list of pairs of argument-vaule keywords refering to
 #|         _ namespace commands and executes them .
 #|        -returns the list of arg-val pairs of kewords not interpreted .
@@ -582,8 +583,8 @@ namespace eval logLib {
 #|           _ as value, except for set_logoutputstream .
 #|          -the first acceptable arg value corresponds to the command
 #|           _ to be called ;;
-  proc arg_interpreter {args} {
-    logMsg "logLib::arg_interpreter: interpreting list of arguments: $args" 3
+  proc logLib_argInterp {args} {
+    logMsg "logLib::logLib_argInterp: interpreting list of arguments: $args" 3
     set remaining_arg_val {}
     if {[expr {[llength $args]%2}] == 0} {
       if {[llength $args] > 0} {
@@ -623,18 +624,18 @@ namespace eval logLib {
           }
         }
     } else {
-      logMsg "logLib::arg_interpreter: Odd number of optional arguments! args: $args" 2
+      logMsg "logLib::logLib_argInterp: Odd number of optional arguments! args: $args" 2
       return ""
       }
     return ${remaining_arg_val}
-    }   ;# proc arg_interpreter
+    }   ;# proc logLib_argInterp
 
 #|      -proc logLib_help {{opt ""}} :
 #|        -prints out information about logLib namespace usage ;
   proc logLib_help {{opt ""}} {
     puts "[::logLib::get_logName_version]: Library to manage log information messages."
     puts "  list of commands and vars, use: logLib::list_commands logLib::list_variables"
-    puts "  optional args for the logLib::arg_interpreter:"
+    puts "  optional args for the logLib::logLib_argInterp:"
     puts "    set_logName"
     puts "    set_logVersion"
     puts "    set_logFileName"
