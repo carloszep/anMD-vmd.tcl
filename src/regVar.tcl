@@ -11,6 +11,12 @@
 #|  -public software repositories :
 #|    -https://github.com/carloszep/anMD-vmd.tcl ;
 #|  -version :
+#|    -0.0.7 :
+#|      -date :
+#|        -2025-06-03.Tue ;
+#|      -regVar_init proc added and called after declaring the namespace .
+#|      -initializing with a variable with the list of the namespace commands .
+#|      -fixed dynamic array access issues ;
 #|    -0.0.6 :
 #|      -date :
 #|        -2025-06-03.Tue ;
@@ -35,7 +41,8 @@
 #|    -perform tests ;
 #|  -notes :
 #|    - .
-set regVar_version 0.0.6
+global regVar_version
+set regVar_version 0.0.7
 
 #|  -namespace regVar :
 namespace eval regVar {
@@ -46,20 +53,43 @@ namespace eval regVar {
 #|      -list_regVariables_byCategory .
 #|      -list_categories .
 #|      -varRemove .
-#|      -regVar_clear ;
+#|      -regVar_clear .
+#|      -getVarValue ;
   namespace export varSave varRestore list_regVariables
   namespace export list_regVariables_byCategory list_categories
-  namespace export varRemove regVar_clear
+  namespace export varRemove regVar_clear getVarValue
 
 #|    -variables :
 #|      -a_categoryVars :
-#|        -array where keys are categories and values are lists of variable names .
-#|      -storage arrays :
-#|        -each category gets its own array: a_cat_${category} ;;
+#|        -array where keys are categories and values are
+#|         _ lists of variable names .
+#|        -storage arrays :
+#|          -each category gets its own array: a_cat_${category} ;;
   variable a_categoryVars
   array set a_categoryVars {}
 
+#|      -l_regVar_commands :
+#|        -list of namespace regVar commands ;;
+  variable l_regVar_commands {}
+
 #|    -commands :
+#|      -proc regVar_init {} :
+#|        -registers the names of the namespace variables .
+#|        - ;
+  proc regVar_init {} {
+    variable l_regVar_commands
+    global regVar_version
+    set l_regVar_commands [list "varSave" "varRestore" \
+                                "list_regVariables" \
+                                "list_regVariables_byCategory" \
+                                "list_categories" \
+                                "varRemove" "regVar_clear" \
+                                "getVarValue"]
+    regVar_clear "regVar"
+    varSave l_regVar_commands "regVar"
+    puts "regVar_v${regVar_version}: Library to store variable names and values."
+    }
+
 #|      -proc varSave {varName {category "default"}} :
 #|        -adds a variable including its current value in the calling proc .
 #|        -assigns it to a category (default: "default") .
@@ -71,29 +101,32 @@ proc varSave {varName {category "default"}} {
   # Initialize category if it doesn't exist
   if {![info exists a_categoryVars($category)]} {
     set a_categoryVars($category) {}
-    }
+  }
   
   # Create or access the category-specific array
-  variable a_cat_${category}
-  if {![array exists a_cat_${category}]} {
-    array set a_cat_${category} {}
-    }
+  set arrayName "a_cat_${category}"
+  variable $arrayName
+  upvar 0 $arrayName categoryArray
+  
+  if {![array exists categoryArray]} {
+    array set categoryArray {}
+  }
   
   # Check if variable exists in calling scope
   if {[uplevel 1 [list info exists $varName]]} {
     # Variable exists, get its value
     upvar $varName var
-    set a_cat_${category}($varName) $var
+    set categoryArray($varName) $var
   } else {
     # Variable doesn't exist, create it with empty value
-    set a_cat_${category}($varName) ""
-    }
+    set categoryArray($varName) ""
+  }
   
   # Add to category variable list if not already present
   if {[lsearch $a_categoryVars($category) $varName] < 0} {
     lappend a_categoryVars($category) $varName
-    }
   }
+}
 
 #|      -proc varRestore {varName {category "default"}} :
 #|        -updates the value of a registered variable varName from
@@ -108,14 +141,17 @@ proc varSave {varName {category "default"}} {
     if {[info exists a_categoryVars($category)] && 
         [lsearch $a_categoryVars($category) $varName] >= 0} {
       
-      variable a_cat_${category}
-      if {[info exists a_cat_${category}($varName)]} {
-        set var $a_cat_${category}($varName)
+      set arrayName "a_cat_${category}"
+      variable $arrayName
+      upvar 0 $arrayName categoryArray
+      
+      if {[info exists categoryArray($varName)]} {
+        set var $categoryArray($varName)
         return 1
-        }
       }
-    return 0
     }
+    return 0
+  }
 
 #|      -proc list_regVariables {{category ""}} :
 #|        -returns the list of registered (saved) variables .
@@ -139,23 +175,23 @@ proc varSave {varName {category "default"}} {
         return $a_categoryVars($category)
       } else {
         return {}
-        }
       }
     }
+  }
 
 #|      -proc list_regVariables_byCategory {} :
 #|        -returns a dictionary/list mapping categories to their variables ;;
   proc list_regVariables_byCategory {} {
     variable a_categoryVars
     return [array get a_categoryVars]
-    }
+  }
 
 #|      -proc list_categories {} :
 #|        -returns a list of all categories currently in use ;;
   proc list_categories {} {
     variable a_categoryVars
     return [lsort [array names a_categoryVars]]
-    }
+  }
 
 #|      -proc varRemove {varNames {category "default"}} :
 #|        -removes one or more variables from specified category .
@@ -167,9 +203,11 @@ proc varSave {varName {category "default"}} {
     # Check if category exists
     if {![info exists a_categoryVars($category)]} {
       return
-      }
+    }
     
-    variable a_cat_${category}
+    set arrayName "a_cat_${category}"
+    variable $arrayName
+    upvar 0 $arrayName categoryArray
     
     foreach varName $varNames {
       set ind [lsearch $a_categoryVars($category) $varName]
@@ -178,20 +216,20 @@ proc varSave {varName {category "default"}} {
         set a_categoryVars($category) [lreplace $a_categoryVars($category) $ind $ind]
         
         # Remove from category array
-        if {[info exists a_cat_${category}($varName)]} {
-          unset a_cat_${category}($varName)
-          }
+        if {[info exists categoryArray($varName)]} {
+          unset categoryArray($varName)
         }
       }
+    }
     
     # Clean up empty category
     if {[llength $a_categoryVars($category)] == 0} {
       unset a_categoryVars($category)
-      if {[array exists a_cat_${category}]} {
-        unset a_cat_${category}
-        }
+      if {[array exists categoryArray]} {
+        unset $arrayName
       }
     }
+  }
 
 #|      -proc regVar_clear {{category ""}} :
 #|        -removes all variables stored in the namespace .
@@ -203,14 +241,14 @@ proc varSave {varName {category "default"}} {
       # Clear all categories
       foreach cat [array names a_categoryVars] {
         varRemove $a_categoryVars($cat) $cat
-        }
+      }
     } else {
       # Clear specific category
       if {[info exists a_categoryVars($category)]} {
         varRemove $a_categoryVars($category) $category
-        }
       }
     }
+  }
 
 #|      -proc getVarValue {varName {category "default"}} :
 #|        -returns the stored value of a variable without restoring it .
@@ -221,15 +259,21 @@ proc varSave {varName {category "default"}} {
     if {[info exists a_categoryVars($category)] && 
         [lsearch $a_categoryVars($category) $varName] >= 0} {
       
-      variable a_cat_${category}
-      if {[info exists a_cat_${category}($varName)]} {
-        return $a_cat_${category}($varName)
-        }
+      set arrayName "a_cat_${category}"
+      variable $arrayName
+      upvar 0 $arrayName categoryArray
+      
+      if {[info exists categoryArray($varName)]} {
+        return $categoryArray($varName)
       }
-    error "Variable '$varName' not found in category '$category'"
     }
+    error "Variable '$varName' not found in category '$category'"
+  }
 
 #|      - ;;
 #|  - ;
 }   ;#   namespace eval regVar
+
+regVar::regVar_init
+
 

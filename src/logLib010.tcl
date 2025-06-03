@@ -5,48 +5,35 @@
 #|    -created :
 #|      -2023-04-28.Fri ;
 #|    -modified :
-#|      -2025-06-03.Tue ;;
+#|      -2025-05-03.Sat ;;
 #|  -authors and contributors :
 #|    -Carlos Z. Gómez Castro ;
 #|  -public software repositories :
 #|    -https://github.com/carloszep/anMD-vmd.tcl ;
-#|  -version :
-#|    -0.1.1 :
-#|      -date :
-#|        -2025-06-03.Tue ;
-#|      -updating to use regVar v007 (by Claude) .
-#|      -updated add_logLib_variables and add_logLib_commands .
-#|      -l_variables renamed to l_logLib_variables .
-#|      -l_commands renamed to l_logLib_commands .
-#|      -add_variables renamed to add_logLib_variables .
-#|      -list_variables renamed to list_logLib_variables .
-#|      -add_commands renamed to add_logLib_commands .
-#|      -list_commands renamed to list_logLib_commands ;
-#|    -0.1.0 :
-#|      -date :
-#|        -2025-05-03.Sat ;
+#|  -version information :
+#|    -version :-0.1.0 ;
+#|    -recent changes :
 #|      -arg_interpreter renamed to logLib_argInterp .
 #|      -regVar is sourced using loadLib .
 #|      -logLib_help proc added .
-#|      -regVar namespace incorporated ;;
-#|  -to do list :
-#|    -improve logLib_help .
-#|    -to implement a graphical interface .
-#|    -to implement an internal namespace test command .
-#|    -to add add_state_variables command *? ;;
+#|      -regVar namespace incorporated ;
+#|    -to do list :
+#|      -improve logLib_help .
+#|      -to implement a graphical interface .
+#|      -to implement an internal namespace test command .
+#|      -to add add_state_variables command *? ;;
 #|  -usage :
 #|    -1. source within another script as :
 #|      -source logLib.tcl ;
 #|    -2. the namespace commands can be imported as :
-#|      -namespace import logLib::* ;
+#|      -namespace import ::logLib::* ;
 #|    -3. the name and version of the invoking script may be specified :
 #|      - ;;
 #|  -notes :
 #|    -originally started within the anMD lib ;
 #|  -sourced files :
 #|    -regVar.tcl ;
-global logLib_version
-set logLib_version 0.1.1
+set logLib_version 0.1.0
 loadLib regVar
 
 #|  -namespace logLib :
@@ -83,10 +70,10 @@ namespace eval logLib {
 #|      -get_logAppend .
 #|      -logAppendOn .
 #|      -logAppendOff .
-#|      -add_logLib_variables .
-#|      -list_logLib_variables .
-#|      -add_logLib_commands .
-#|      -list_logLib_commands .
+#|      -add_variables .
+#|      -list_variables .
+#|      -add_commands .
+#|      -list_commands .
 #|      -state_save .
 #|      -state_restore .
 #|      -state_show .
@@ -101,8 +88,8 @@ namespace eval logLib {
   namespace export get_logLevel set_logLevel logMsg logToken logFlush
   namespace export get_logScreen logScreenOn logScreenOff
   namespace export get_logAppend logAppendOn logAppendOff
-  namespace export add_logLib_variables list_logLib_variables
-  namespace export add_logLib_commands list_logLib_commands
+  namespace export add_variables list_variables
+  namespace export add_commands list_commands
   namespace export state_save state_restore state_show
   namespace export logLib_argInterp
   namespace export logLib_help
@@ -116,12 +103,11 @@ namespace eval logLib {
   variable logNameTxt "logLib"
 
 #|      -logVersionTxt :
-#|        -version string of the proc, library, namespace, etc.,
-#|         _ using the logLib .
+#|        -version string of the proc, library, namespace, etc., using the logLib .
 #|        -to be included in the default logFileName and in log msgs .
 #|        -default value :
 #|          -"0.0.7" ;;
-  variable logVersionTxt $logLib_version
+  variable logVersionTxt "0.0.8"
 
 #|      -logPath :
 #|        -default value :-"" ;;
@@ -158,33 +144,32 @@ namespace eval logLib {
 #|        -default value :-1 ;;
   variable logAppend 1
 
-#|      -l_logLib_variables :
+#|      -l_variables :
 #|        -contains the names of all namespace variables in a list .
 #|        -are used as "state" variables to be used in
 #|         _ ::logLib::state_save and ::logLib::state_restore commands ;
-  variable l_logLib_variables [list logNameTxt logVersionTxt logPath \
-                                    logFileName logPrefix logSufix loSt \
-                                    logLvl logScreen logAppend \
-                                    l_logLib_commands]
+  variable l_variables [list logNameTxt logVersionTxt logPath logFileName \
+                             logPrefix logSufix loSt logLvl logScreen \
+                             logAppend l_commands]
 
-#|      -l_logLib_commands :
+#|      -l_commands :
 #|        -list of the proc names to be exported by the namespace ;;
-  variable l_logLib_commands [list get_logName         set_logName \
-                                   get_logVersion      set_logVersion \
-                                   get_logName_version \
-                                   get_logFileName     set_logFileName \
-                                   get_logPrefix       set_logPrefix \
-                                   get_logSufix        set_logSufix \
-                                   get_logOutputStream set_logOutputStream \
-                                   get_logLevel        set_logLevel \
-                                   get_logScreen logScreenOn   logScreenOff \
-                                   get_logAppend logAppendOn   logAppendOff \
-                                   logMsg        logToken      logFlush \
-                                   add_logLib_variables       list_logLib_variables \
-                                   add_logLib_commands        list_logLib_commands \
-                                   state_save    state_restore state_show \
-                                   logLib_argInterp \
-                                   logLib_help]
+  variable l_commands [list get_logName         set_logName \
+                            get_logVersion      set_logVersion \
+                            get_logName_version \
+                            get_logFileName     set_logFileName \
+                            get_logPrefix       set_logPrefix \
+                            get_logSufix        set_logSufix \
+                            get_logOutputStream set_logOutputStream \
+                            get_logLevel        set_logLevel \
+                            get_logScreen logScreenOn   logScreenOff \
+                            get_logAppend logAppendOn   logAppendOff \
+                            logMsg        logToken      logFlush \
+                            add_variables       list_variables \
+                            add_commands        list_commands \
+                            state_save    state_restore state_show \
+                            logLib_argInterp \
+                            logLib_help]
 
 #|    -commands :
 #|      -proc get_logName {} :
@@ -487,100 +472,84 @@ namespace eval logLib {
     set logAppend 0
     }
 
-#|      -proc add_logLib_variables {new_variables} :
-#|        -adds variable names to the l_logLib_variables list ;
-  proc add_logLib_variables {new_variables} {
-    variable l_logLib_variables
-    logMsg "logLib::add_logLib_variables: variables appended to l_logLib_variables: $new_variables" 3
-    set l_logLib_variables [list {*}$l_logLib_variables {*}$new_variables]
+#|      -proc add_variables {new_variables} :
+#|        -adds variable names to the l_variables list ;
+  proc add_variables {new_variables} {
+    variable l_variables
+    logMsg "logLib::add_variables: variables appended to l_variables: $new_variables" 3
+    set l_variables [list {*}$l_variables {*}$new_variables]
     foreach varName $new_variables {
       upvar $varName var
       variable $varName $var
       }
     }
 
-#|      -proc list_logLib_variables {} :
-#|        -returns a list of variable names stored in l_logLib_variables ;
-  proc list_logLib_variables {} {
-    variable l_logLib_variables
-    logMsg "logLib::list_logLib_variables: returned l_logLib_variables: $l_logLib_variables" 4
-    return $l_logLib_variables
+#|      -proc list_variables {} :
+#|        -returns a list of variable names stored in l_variables ;
+  proc list_variables {} {
+    variable l_variables
+    logMsg "logLib::list_variables: returned l_variables: $l_variables" 4
+    return $l_variables
     }
 
-#|      -proc add_logLib_commands {new_commands} :
-#|        -adds command names to the l_logLib_commands list ;
-  proc add_logLib_commands {new_commands} {
-    variable l_logLib_commands
-    logMsg "logLib::add_logLib_commands: commands appended to l_logLib_commands: $new_commands" 3
-    set l_logLib_commands [list {*}$l_logLib_commands {*}$new_commands]
+#|      -proc add_commands {new_commands} :
+#|        -adds command names to the l_commands list ;
+  proc add_commands {new_commands} {
+    variable l_commands
+    logMsg "logLib::add_commands: commands appended to l_commands: $new_commands" 3
+    set l_commands [list {*}$l_commands {*}$new_commands]
     }
 
-#|      -proc list_logLib_commands {} :
+#|      -proc list_commands {} :
 #|        -returns a list of the commands that can be exported ;
-  proc list_logLib_commands {} {
-    variable l_logLib_commands
-    logMsg "logLib::list_logLib_commands: returned l_logLib_commands: $l_logLib_commands" 4
-    return $l_logLib_commands
+  proc list_commands {} {
+    variable l_commands
+    logMsg "logLib::list_commands: returned l_commands: $l_commands" 4
+    return $l_commands
     }
 
 #|      -proc state_save {} :
 #|        -registers (stores) the names and values of the namespace variables
-#|         _ in the regVar namespace using "logLib" category ;
+#|         _ in l_variables in the regVar namespace ;
   proc state_save {} {
-    variable l_logLib_variables
-    logMsg "logLib::state_save: vars and values stored into regVar category 'logLib'" 3
-    foreach var ${l_logLib_variables} {
+    variable l_variables
+    logMsg "logLib::state_save: vars and values stored into regVar" 3
+    foreach var ${l_variables} {
       variable $var
       logMsg "logLib::state_save:   variable: $var value: [set $var]" 4
-      varSave $var "logLib"
+      varSave $var
       }
     }
 
 #|      -proc state_restore {} :
-#|        -restores the values of all the variables from the regVar "logLib"
-#|         _ category to the ::logLib:: namespace variables ;
+#|        -copy the values of all the variables within the '::logLib::state::'
+#|         _ nested namespace to the ::logLib:: namespace variables .
+#|        -if the value of ::logLib::state::saved is 0 does nothing ;
   proc state_restore {} {
-    variable l_logLib_variables
-    logMsg "logLib::state_restore: vars and values restored from regVar category 'logLib'" 3
-    foreach var $l_logLib_variables {
+    variable l_variables
+    logMsg "logLib::state_restore: vars and values restored from regVar" 3
+    foreach var $l_variables {
       variable $var
-      if {[regVar::varRestore $var "logLib"]} {
+      if {[regVar::varRestore $var]} {
         logMsg "logLib::state_restore:   $var value restored: [set $var]" 4
       } else {
-        logMsg "logLib::state_restore:   $var value not restored from regVar" 3
+        logMsg "logLib::state_restore:   $var value not restored" 3
         }
       }
     }
 
 #|      -proc state_show {{lvl 1}} :
-#|        -prints variable names and values from both current namespace
-#|         _ and regVar "logLib" category .
+#|        -prints to variable names and values specified in l_variables .
 #|        -arguments :
 #|          -lvl :-output log level for logMsg output ;;;
   proc state_show {{lvl 1}} {
-    variable l_logLib_variables
+    variable l_variables
     logMsg "logLib::state_show: printing the namespace variables's values" 3
     logMsg "logLib::state_show:   to output level: $lvl" 3
-    
-    logMsg "=== Current logLib namespace variables ===" $lvl
-    foreach var ${l_logLib_variables} {
+    foreach var ${l_variables} {
       variable $var
       logMsg "logLib::state_show:   sent to log: $var [set $var]" 5
-      logMsg "  current $var: [set $var]" $lvl
-      }
-    
-    logMsg "=== Stored regVar 'logLib' category variables ===" $lvl
-    set storedVars [regVar::list_regVariables "logLib"]
-    if {[llength $storedVars] > 0} {
-      foreach var $storedVars {
-        if {[catch {set storedValue [regVar::getVarValue $var "logLib"]} err]} {
-          logMsg "  stored $var: <error: $err>" $lvl
-        } else {
-          logMsg "  stored $var: $storedValue" $lvl
-          }
-        }
-    } else {
-      logMsg "  (no variables stored in regVar 'logLib' category)" $lvl
+      logMsg "  $var [set $var]" $lvl
       }
     }
 
@@ -665,7 +634,7 @@ namespace eval logLib {
 #|        -prints out information about logLib namespace usage ;
   proc logLib_help {{opt ""}} {
     puts "[::logLib::get_logName_version]: Library to manage log information messages."
-    puts "  list of commands and vars, use: logLib::list_logLib_commands logLib::list_logLib_variables"
+    puts "  list of commands and vars, use: logLib::list_commands logLib::list_variables"
     puts "  optional args for the logLib::logLib_argInterp:"
     puts "    set_logName"
     puts "    set_logVersion"
