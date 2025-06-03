@@ -36,17 +36,24 @@ source logLib.tcl
 #|  -namespace argInterp :
 namespace eval argInterp {
 
-#|    -import :-::logLib::* ;
+#|    -import :
+#|      -::logLib::* :
+#|        -logLib already  includes ;;
   namespace import ::logLib::*
 
 #|    -export :
 #|      -test_argInterp .
 #|      - ;
+  namespace export test_argInterp
+
 #|    -namespace variables :
-#|      -interp_args .
-#|      -interp_coms ;
+#|      -argInterp_args .
+  variable artInterp_args {}
+
+#|      -argInterp_coms ;
+
 #|    -namspace commands :- ;;
-  variable interp_args {}
+
 
   proc argInterp_init {} {
 
