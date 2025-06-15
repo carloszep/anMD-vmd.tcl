@@ -17,7 +17,12 @@
 #|      -'var val', 'var=val', '-var val', --var{val}, ... ;;
 #|  -version information :
 #|    -version :
+#|      -002 :
+#|        -date :-2025-06-15.Sun ;
+#|        -the logLib_argInterp now always pre-process the userArg list .
+#|        -the logLib options can be configured from any application ;
 #|      -0.0.1 ;
+#|        -date :-2025-06-03.Tue ;
 #|        -complete initial working version .
 #|        -integration with regVar and logLib namespaces .
 #|        -support for multiple argument formats .
@@ -30,22 +35,27 @@
 #|      -add help generation functionality ;;
 #|  -dates :
 #|    -created :-2023-09-04.Mon ;
-#|    -modified :-2025-06-03.Tue ;
+#|    -modified :-2025-06-15.Sun ;
 #|  -authors and contributors :
 #|    -Carlos Z. Gómez Castro ;
 #|    -Claude (implementation assistance) ;
 #|  -notes :
-#|    -integrates with regVar for variable storage and logLib for logging ;
+#|    -integrates with regVar for variable storage and logLib for logging .
+#|    -regVar is implicitly imported by loadLib .
+#|    -input for the logLib_argInterp can be passed in the interpret_args
+#|     _ userArgs input list ;
 
 global argInterp_version
-set argInterp_version 0.0.1
+set argInterp_version 002
 
-#|-source files :
-#|  -logLib ;
-if {[llength [info procs loadLib] > 0]} {
+#|  -source files :
+#|    -logLib ;
+if {[info commands ::loadLib] ne ""} {
   loadLib logLib
-} else {
+} elseif {[file exists "logLib.tcl"]} {
   source logLib.tcl
+} else {
+  error "Cannot find logLib: neither loadLib command nor logLib.tcl file"
   }
 
 #|  -namespace argInterp :
@@ -57,6 +67,7 @@ namespace eval argInterp {
 #|      -::regVar::* :
 #|        -regVar for variable storage ;;
   namespace import ::logLib::*
+  namespace import ::regVar::*
 
 #|    -export :
 #|      -argInterp_init .
@@ -113,7 +124,7 @@ namespace eval argInterp {
     set_logFileName "stdout"
     set_logLevel 2
     set_logName "argInterp"
-    set_logVersion $argInterp_version
+    set_logVersion $::argInterp_version
     
     # Set current context
     set current_context $context
@@ -136,7 +147,7 @@ namespace eval argInterp {
     logFlush
   }
 
-#|      -proc set_arg {argName args} :
+#|    -proc set_arg {argName args} :
 #|        -defines/modifies arguments and options .
 #|        -arguments :
 #|          -argName :
@@ -147,7 +158,7 @@ namespace eval argInterp {
 #|          -'default', 'defaultValue' :
 #|            -default value for the argument .
 #|          -'type' :
-#|            -argument type: 'flag', 'value', 'list', 'script' .
+#|            -argument type: 'value', 'list', 'script' .
 #|          -'required' :
 #|            -boolean indicating if argument is required .
 #|          -'multiple' :
@@ -189,11 +200,12 @@ namespace eval argInterp {
               logMsg "argInterp::set_arg: set default to: $val" 4
             }
             "type" {
-              if {$val in {flag value list script}} {
+              if {$val in {value list script}} {
                 dict set argDef type $val
                 logMsg "argInterp::set_arg: set type to: $val" 4
               } else {
                 logMsg "argInterp::set_arg: invalid type '$val', using 'value'" 2
+                dict set argDef type "value"
               }
             }
             "required" {
@@ -322,16 +334,18 @@ namespace eval argInterp {
     logMsg "argInterp::clear_args: cleared all arguments in context '$current_context'" 3
   }
 
-#|      -proc interpret_args {userArgs {namespace_context ""}} :
+#|      -proc interpret_args {userArgs {namespace_context ""} {process_logLib_args 1}} :
 #|        -interprets user-provided arguments in the style of setCLOptions .
 #|        -arguments :
 #|          -userArgs :
 #|            -list of user arguments to interpret .
 #|          -namespace_context :
-#|            -namespace where variables should be set (optional) ;
+#|            -namespace where variables should be set (optional) .
+#|          -process_logLib_args :
+#|            -if 1, first pass arguments through logLib_argInterp (default: 1) ;
 #|        -returns :
 #|          -list of unprocessed arguments (like setCLOptions) ;
-  proc interpret_args {userArgs {namespace_context ""}} {
+  proc interpret_args {userArgs {namespace_context ""} {process_logLib_args 1}} {
     variable current_context
     variable validation_errors
     
@@ -339,15 +353,28 @@ namespace eval argInterp {
     
     set validation_errors {}
     set result [dict create]
-    set unprocessed {}
+    set remaining_args $userArgs
+    
+    # First pass: Process logLib arguments if enabled
+    if {$process_logLib_args} {
+      logMsg "argInterp::interpret_args: first pass - processing logLib arguments" 4
+      if {[catch {
+        set remaining_args [logLib_argInterp {*}$userArgs]
+        logMsg "argInterp::interpret_args: logLib processed, remaining: $remaining_args" 4
+      } err]} {
+        logMsg "argInterp::interpret_args: error in logLib_argInterp: $err" 2
+        # Continue with original args if logLib processing fails
+        set remaining_args $userArgs
+      }
+    }
     
     # Get all defined arguments
     set definedArgs [list_args]
     
-    # Check for even number of arguments (matching your style)
-    if {[expr {[llength $userArgs] % 2}] == 0} {
-      if {[llength $userArgs] > 0} {
-        foreach {arg val} $userArgs {
+    # Check for even number of remaining arguments
+    if {[expr {[llength $remaining_args] % 2}] == 0} {
+      if {[llength $remaining_args] > 0} {
+        foreach {arg val} $remaining_args {
           logMsg "argInterp::interpret_args: reading arg-val: $arg $val" 4
           set processed 0
           
@@ -389,7 +416,7 @@ namespace eval argInterp {
       
       logMsg "argInterp::interpret_args: unused arguments: $unprocessed" 3
     } else {
-      logMsg "argInterp::interpret_args: Odd number of arguments: $userArgs" 1
+      logMsg "argInterp::interpret_args: Odd number of remaining arguments: $remaining_args" 1
       return ""
     }
     
@@ -519,8 +546,7 @@ namespace eval argInterp {
     
     set_arg "verbose" \
       aliases {v} \
-      type flag \
-      help "Enable verbose output"
+      help "Enable verbose output (use: verbose 1)"
     
     set_arg "output" \
       aliases {o out} \
@@ -559,11 +585,12 @@ namespace eval argInterp {
       action "set_bll" \
       help "Base log level"
     
-    # Test with setCLOptions-style arguments (case insensitive)
-    set testArgs2 {src test.pdb PDBID 123 cutoff 5.0 unknown_arg unknown_val}
+    # Test with setCLOptions-style arguments including logLib args
+    set testArgs2 {src test.pdb PDBID 123 cutoff 5.0 logLevel 4 logFileName test.log unknown_arg unknown_val}
     set unprocessed [interpret_args $testArgs2]
     
     logMsg "argInterp::test_argInterp: unprocessed args (should contain unknown_arg): $unprocessed" 1
+    logMsg "argInterp::test_argInterp: logLib should have processed logLevel and logFileName" 1
     
     # Test 3: Create a setCLOptions replacement
     logMsg "argInterp::test_argInterp: Test 3 - setCLOptions replacement" 1
@@ -695,8 +722,8 @@ namespace eval argInterp {
 #|            -name for the replacement procedure ;
   proc create_setCLOptions_replacement {namespace_name procName} {
     set procBody "
-    # Process arguments using argInterp
-    set unprocessed_args \[::argInterp::interpret_args \$args \"$namespace_name\"\]
+    # Process arguments using argInterp (including logLib integration)
+    set unprocessed_args \[::argInterp::interpret_args \$args \"$namespace_name\" 1\]
     
     # Log final message (matching your style)
     variable procN
