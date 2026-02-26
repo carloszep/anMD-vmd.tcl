@@ -67,7 +67,7 @@ namespace eval argInterp {
 #|      -::regVar::* :
 #|        -regVar for variable storage ;;
   namespace import ::logLib::*
-  namespace import ::regVar::*
+#  namespace import ::regVar::*
 
 #|    -export :
 #|      -argInterp_init .
@@ -194,11 +194,11 @@ namespace eval argInterp {
             "alias" - "aliases" {
               dict set argDef aliases $val
               logMsg "argInterp::set_arg: set aliases to: $val" 4
-            }
+              }
             "default" - "defaultvalue" - "defval" {
               dict set argDef default $val
               logMsg "argInterp::set_arg: set default to: $val" 4
-            }
+              }
             "type" {
               if {$val in {value list script}} {
                 dict set argDef type $val
@@ -206,38 +206,38 @@ namespace eval argInterp {
               } else {
                 logMsg "argInterp::set_arg: invalid type '$val', using 'value'" 2
                 dict set argDef type "value"
+                }
               }
-            }
             "required" {
               dict set argDef required [expr {$val ? 1 : 0}]
               logMsg "argInterp::set_arg: set required to: [dict get $argDef required]" 4
-            }
+              }
             "multiple" {
               dict set argDef multiple [expr {$val ? 1 : 0}]
               logMsg "argInterp::set_arg: set multiple to: [dict get $argDef multiple]" 4
-            }
+              }
             "validate" {
               dict set argDef validate $val
               logMsg "argInterp::set_arg: set validation to: $val" 4
-            }
+              }
             "action" {
               dict set argDef action $val
               logMsg "argInterp::set_arg: set action to: $val" 4
-            }
+              }
             "help" {
               dict set argDef help $val
               logMsg "argInterp::set_arg: set help to: $val" 4
-            }
+              }
             default {
               logMsg "argInterp::set_arg: unknown option '$arg' ignored" 2
+              }
             }
           }
         }
-      }
     } else {
       logMsg "argInterp::set_arg: odd number of optional arguments! args: $args" 1
       return 0
-    }
+      }
     
     # Store argument definition in regVar
     if {[catch {
@@ -254,14 +254,14 @@ namespace eval argInterp {
         # Update existing argument
         set_regvar_value $argName $argDefStr $categoryVar
         logMsg "argInterp::set_arg: updated existing argument '$argName'" 3
-      }
+        }
     } err]} {
       logMsg "argInterp::set_arg: error storing argument definition: $err" 1
       return 0
-    }
+      }
     
     return 1
-  }
+    }
 
 #|      -proc get_arg {argName {property ""}} :
 #|        -retrieves argument definition or specific property .
