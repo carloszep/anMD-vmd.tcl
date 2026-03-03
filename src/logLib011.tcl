@@ -5,17 +5,12 @@
 #|    -created :
 #|      -2023-04-28.Fri ;
 #|    -modified :
-#|      -2026-03-02.Mon ;;
+#|      -2025-06-03.Tue ;;
 #|  -authors and contributors :
 #|    -Carlos Z. Gómez Castro ;
 #|  -public software repositories :
 #|    -https://github.com/carloszep/anMD-vmd.tcl ;
 #|  -version :
-#|    -0.1.2 :
-#|      -date :
-#|        -2026-03-02.Mon ;
-#|      -added proc logFinish .
-#|      -untested ;
 #|    -0.1.1 :
 #|      -date :
 #|        -2025-06-03.Tue ;
@@ -51,7 +46,7 @@
 #|  -sourced files :
 #|    -regVar.tcl ;
 global logLib_version
-set logLib_version 0.1.2
+set logLib_version 0.1.1
 loadLib regVar
 
 #|  -namespace logLib :
@@ -439,17 +434,6 @@ namespace eval logLib {
     variable loSt
     logMsg "logLib::logFlush: Flushing output stream buffer." 4
     if {$loSt != "stdout"} {flush $loSt}
-    }
-
-#|      -proc logFinish {} :
-#|        -flushes and closes the log file if it is being used .
-#|        -intended to safetly stop logging .
-#|        -notes :
-#|          -untested ;;
-  proc logFinish {} {
-    logMsg "logLib::logFlush: Finihing log file." 4
-    logFlush
-    set_logFileName "stdout"
     }
 
 #|      -proc get_logScreen {} :
