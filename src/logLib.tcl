@@ -13,7 +13,8 @@
 #|  -version :
 #|    -0.1.2 :
 #|      -date :
-#|        -2026-03-02.Mon ;
+#|        -2026-03-09.Mon ;
+#|      -modified set_logFileName to accept the same log file already used .
 #|      -added proc logFinish .
 #|      -untested ;
 #|    -0.1.1 :
@@ -276,43 +277,54 @@ namespace eval logLib {
     variable logFileName
     variable logAppend
     variable loSt
-#    state_save   ;# saving namespace variables
-#    set_logPrefix "logLib::set_logFileName: "
-    if {$loSt != "stdout"} {
-      logMsg "closing current log output stream..." 2
-      close $loSt
-      }
+
     switch [string tolower $fileName] {
       "none" - "" - "stdout" - "screen" {
+        if {$loSt != "stdout"} {
+          logMsg "closing current log output stream..." 2
+          close $loSt
+          }
         logMsg "set logFileName to: ''" 3
-        logMsg "sending log messages to 'stdout'" 2
+        logMsg "sending log messages to 'stdout'" 3
         set loSt stdout
         set logFileName ""
         }
       "auto" - "default" {
-        set logFileName "log_[get_logName_version].txt"
-        logMsg "set logFileName to: $logFileName" 2
-        if {([file exists ${logPath}${logFileName}]) && ($logAppend)} {
-          logMsg "appending log messages to: ${logPath}${logFileName}" 3
-          set loSt [open ${logPath}${logFileName} a]
+        set autoName "log_[get_logName_version].txt"
+        if {$autoName != $logFileName} {
+          logMsg "closing current log output stream..." 3
+          close $loSt
+          set logFileName $autoName
+          logMsg "set logFileName to: $logFileName" 2
+          if {([file exists ${logPath}${logFileName}]) && ($logAppend)} {
+            logMsg "appending log messages to: ${logPath}${logFileName}" 3
+            set loSt [open ${logPath}${logFileName} a]
+          } else {
+            logMsg "sending log messages to file: ${logPath}${logFileName}" 3
+            set loSt [open ${logPath}${logFileName} w]
+            }
         } else {
-          logMsg "sending log messages to new file: ${logPath}${logFileName}" 3
-          set loSt [open ${logPath}${logFileName} w]
+          logMsg "keeping the current log file: $logFileName" 3
           }
         }
       default {
-        set logFileName $fileName
-        logMsg "set logFileName to: $logFileName" 2
-        if {([file exists ${logPath}${logFileName}]) && ($logAppend)} {
-          logMsg "appending log messages to: ${logPath}${logFileName}" 3
-          set loSt [open ${logPath}${logFileName} a]
+        if {$fileName != $logFileName} {
+          logMsg "closing current log output stream..." 3
+          close $loSt
+          set logFileName $fileName
+          logMsg "set logFileName to: $logFileName" 2
+          if {([file exists ${logPath}${logFileName}]) && ($logAppend)} {
+            logMsg "appending log messages to: ${logPath}${logFileName}" 3
+            set loSt [open ${logPath}${logFileName} a]
+          } else {
+            logMsg "sending log messages to file: ${logPath}${logFileName}" 3
+            set loSt [open ${logPath}${logFileName} w]
+            }
         } else {
-          logMsg "sending log messages to new file: ${logPath}${logFileName}" 3
-          set loSt [open ${logPath}${logFileName} w]
+          logMsg "keeping the current log file: $logFileName" 3
           }
         }
       }
-#    state_restore    ;# restoring namespace variables
     }
 
 #|      -proc get_logPrefix {} :
