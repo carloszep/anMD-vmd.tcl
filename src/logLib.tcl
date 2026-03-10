@@ -5,7 +5,7 @@
 #|    -created :
 #|      -2023-04-28.Fri ;
 #|    -modified :
-#|      -2026-03-02.Mon ;;
+#|      -2026-04-10.Tue ;;
 #|  -authors and contributors :
 #|    -Carlos Z. Gómez Castro ;
 #|  -public software repositories :
@@ -13,7 +13,7 @@
 #|  -version :
 #|    -0.1.2 :
 #|      -date :
-#|        -2026-03-09.Mon ;
+#|        -2026-03-10.Tue ;
 #|      -modified set_logFileName to accept the same log file already used .
 #|      -added proc logFinish .
 #|      -untested ;
@@ -83,6 +83,7 @@ namespace eval logLib {
 #|      -logMsg .
 #|      -logToken .
 #|      -logFlush .
+#|      -logFinish .
 #|      -get_logScreen .
 #|      -logScreenOn .
 #|      -logScreenOff .
@@ -104,7 +105,8 @@ namespace eval logLib {
   namespace export get_logPrefix set_logPrefix
   namespace export get_logSufix set_logSufix
   namespace export get_logOutputStream set_logOutputStream
-  namespace export get_logLevel set_logLevel logMsg logToken logFlush
+  namespace export get_logLevel set_logLevel
+  namespace export logMsg logToken logFlush logFinish
   namespace export get_logScreen logScreenOn logScreenOff
   namespace export get_logAppend logAppendOn logAppendOff
   namespace export add_logLib_variables list_logLib_variables
@@ -175,19 +177,20 @@ namespace eval logLib {
 
 #|      -l_logLib_commands :
 #|        -list of the proc names to be exported by the namespace ;;
-  variable l_logLib_commands [list get_logName         set_logName \
-                                   get_logVersion      set_logVersion \
+  variable l_logLib_commands [list get_logName          set_logName \
+                                   get_logVersion       set_logVersion \
                                    get_logName_version \
-                                   get_logFileName     set_logFileName \
-                                   get_logPrefix       set_logPrefix \
-                                   get_logSufix        set_logSufix \
-                                   get_logOutputStream set_logOutputStream \
-                                   get_logLevel        set_logLevel \
+                                   get_logFileName      set_logFileName \
+                                   get_logPrefix        set_logPrefix \
+                                   get_logSufix         set_logSufix \
+                                   get_logOutputStream  set_logOutputStream \
+                                   get_logLevel         set_logLevel \
                                    get_logScreen logScreenOn   logScreenOff \
                                    get_logAppend logAppendOn   logAppendOff \
                                    logMsg        logToken      logFlush \
-                                   add_logLib_variables       list_logLib_variables \
-                                   add_logLib_commands        list_logLib_commands \
+                                   logFinish \
+                                   add_logLib_variables list_logLib_variables \
+                                   add_logLib_commands  list_logLib_commands \
                                    state_save    state_restore state_show \
                                    logLib_argInterp \
                                    logLib_help]
