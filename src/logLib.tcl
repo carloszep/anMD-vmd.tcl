@@ -14,9 +14,9 @@
 #|    -0.1.2 :
 #|      -date :
 #|        -2026-03-10.Tue ;
+#|      -added logScreen option to logLib_argInterp .
 #|      -modified set_logFileName to accept the same log file already used .
-#|      -added proc logFinish .
-#|      -untested ;
+#|      -added proc logFinish ;
 #|    -0.1.1 :
 #|      -date :
 #|        -2025-06-03.Tue ;
@@ -417,8 +417,10 @@ namespace eval logLib {
 #      logMsg "logLib::logMsg: message sent to output stream: $loSt" 3
 #      logMsg "logLib::logMsg:   at log Level: $level" 4
 #      logMsg "logLib::logMsg:   message: $level" 4
-      puts $loSt "${logPrefix}${msg}${logSufix}"
-      if {($loSt != "stdout") && $logScreen} {
+      if {$loSt != "stdout"} {
+        puts $loSt "${logPrefix}${msg}${logSufix}"
+        }
+      if {($loSt == "stdout") && $logScreen} {
 #        logMsg "logLib::logMsg:   message sent also to stdout" 3
         puts stdout "${logPrefix}${msg}${logSufix}"
         }
@@ -636,7 +638,9 @@ namespace eval logLib {
 #|               _ 'logSufix', 'logSufix' .
 #|              -'set_logOutputStream', 'set_logOutput', 'setlogOutput',
 #|               _ 'logOutput', 'logStream', 'setLogOutputStream' .
-#|              -'set_logLevel', 'setLogLevel', 'logLevel', 'logLvl' ;;;
+#|              -'set_logLevel', 'setLogLevel', 'logLevel', 'logLvl' .
+#|              -'logScreen', 'log2screen', 'screenLog', 'outScreen',
+#|               _ 'screenOutput' ;;;
 #|        -notes :
 #|          -this command may provide a shell to implement prior processing
 #|           _ for several commands .
@@ -678,6 +682,10 @@ namespace eval logLib {
             "set_loglevel" - "setloglevel" - "loglevel" - "loglvl" {
               logMsg "setting $arg to $val" 3
               set_logLevel $val}
+            "logscreen" - "log2screen" - "screenlog" - "outscreen" \
+              - "screenoutput" {
+              logMsg "setting $arg to $val" 3
+              if {$val} {logScreenOn} else {logScreenOff}}
             default {
               logMsg "argument $arg not processed; added to remaining arg list" 3
               set remaining_arg_val [list {*}${remaining_arg_val} $arg $val]
